@@ -6,7 +6,4 @@ package fastcampus.team1.foolog.Network;
 
 public class Communication {
 
-    public Communication() {
-
-    }
 }
