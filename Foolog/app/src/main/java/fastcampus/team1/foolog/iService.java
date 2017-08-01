@@ -1,8 +1,8 @@
 package fastcampus.team1.foolog;
 
+import fastcampus.team1.foolog.model.Join;
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
-import fastcampus.team1.foolog.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -13,7 +13,7 @@ import retrofit2.http.POST;
 
 public interface iService {
     @POST("member/")
-    Call<User> createUser(@Body User user);
+    Call<Join> createUser(@Body Join join);
 
     @POST("member/login/")
     Call<LoginResult> createLogin(@Body Login login);

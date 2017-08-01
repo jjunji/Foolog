@@ -7,5 +7,4 @@ package fastcampus.team1.foolog.model;
 public class Login {
     public String email;
     public String password;
-    public String token;
 }

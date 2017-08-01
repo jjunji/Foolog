@@ -5,13 +5,14 @@ package fastcampus.team1.foolog.model;
  */
 
 public class LoginResult {
-    UserResult user;
+    public UserResult user;
     public String key;
 
-    class UserResult {
-        int pk;
+    public class UserResult {
+        public int pk;
         String email;
         String nickname;
         String profile_img;
     }
+
 }

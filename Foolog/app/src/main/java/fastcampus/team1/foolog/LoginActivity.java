@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
 import retrofit2.Call;
@@ -16,6 +18,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+/*
+- model -
+Login : 로그인시 서버로 email, password 전송
+LoginResult : 로그인 -> 토큰 생성 -> 토큰 저장용
+User : 회원가입시 사용
+
+ */
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -45,11 +55,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            // 로그인
             case R.id.btnLogin :
                 String email = txtEmail.getText().toString();
                 String password = txtPassword.getText().toString();
 
-                Login login = new Login();
+                // Login 클래스는 로그인용으로만 사용됨.
+                final Login login = new Login();
                 login.email = email;
                 login.password = password;
 
@@ -61,16 +73,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // 실제 서비스 인터페이스 생성.
                 iService service = retrofit.create(iService.class);
                 // 서비스 호출
-                Call<LoginResult> call = service.createLogin(login);
+                Call<LoginResult> call = service.createLogin(login);  // 응답 body는 LoginResult.class를 이용.
                 call.enqueue(new Callback<LoginResult>() {
                     @Override
                     public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
                         // 전송결과가 정상이면
                         Log.e("Write","in ====== onResponse");
                         if(response.isSuccessful()){
-                            LoginResult login = response.body(); // 3
-                            token = login.key;
+                            LoginResult loginResult = response.body(); // 로그인시 생성되는 객체는 loginResult 형태.
+                            Log.e("LoginActivity", "response body =====================" + loginResult);
+                            token = loginResult.key;
+                            int pk = loginResult.user.pk;
                             Log.e("LoginActivity", "token =====================" +token);
+                            Log.e("LoginActivity", "pk=========================" + pk);
                             Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
                             intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -86,10 +101,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.e("MyTag","error==========="+t.getMessage());
                     }
                 });
-
-                /*intent = new Intent(this, MainActivity.class);
-                startActivity(intent);*/
                 break;
+
+            // 회원가입 페이지로 이동
             case R.id.btnSignUp :
                 intent = new Intent(this, SignUpActivity.class);
                 startActivity(intent);

@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import fastcampus.team1.foolog.model.User;
+import fastcampus.team1.foolog.model.Join;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,11 +49,11 @@ public class SignUpActivity extends AppCompatActivity {
                 String password1 = txtPassword1.getText().toString();
                 String password2 = txtPassword2.getText().toString();
                 // 위젯에 입력된 값을 객체에 담고
-                User user = new User();
-                user.email = email;
-                user.nickname = nickname;
-                user.password1 = password1;
-                user.password2 = password2;
+                Join join = new Join();
+                join.email = email;
+                join.nickname = nickname;
+                join.password1 = password1;
+                join.password2 = password2;
 
                 // 레트로핏 객체 정의
                 Retrofit retrofit = new Retrofit.Builder()
@@ -63,10 +63,10 @@ public class SignUpActivity extends AppCompatActivity {
                 // 실제 서비스 인터페이스 생성.
                 iService service = retrofit.create(iService.class);
                 // 서비스 호출
-                Call<User> call = service.createUser(user);
-                call.enqueue(new Callback<User>() {
+                Call<Join> call = service.createUser(join);
+                call.enqueue(new Callback<Join>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
+                    public void onResponse(Call<Join> call, Response<Join> response) {
                         // 전송결과가 정상이면
                         Log.e("Write","in ====== onResponse");
                         if(response.isSuccessful()){
@@ -79,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<Join> call, Throwable t) {
                         Log.e("MyTag","error==========="+t.getMessage());
                     }
                 });
