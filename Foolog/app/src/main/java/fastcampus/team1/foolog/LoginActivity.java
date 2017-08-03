@@ -3,15 +3,13 @@ package fastcampus.team1.foolog;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.json.JSONObject;
 
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
@@ -33,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText txtEmail, txtPassword;
     private Button btnLogin, btnSignUp;
     private Intent intent;
-    private String token; // 가입 시 생성되는 token 저장
+    static String token; // 가입 시 생성되는 token 저장
     private String loginId, loginPwd;  // SharedPreferences 사용을 위한 id, pwd 선언
     private Login login;
 
