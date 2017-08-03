@@ -29,6 +29,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static fastcampus.team1.foolog.LoginActivity.token;
 
+import static fastcampus.team1.foolog.LoginActivity.token;
+
 public class WriteActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton btnBack;
@@ -64,7 +66,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         initView();
         setListener();
         setRadioGroup();
-
     }
 
     /**
@@ -197,6 +198,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+
     private void setData(){
         String text = editContent.getText().toString();
 
@@ -248,6 +250,4 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
-
 }
