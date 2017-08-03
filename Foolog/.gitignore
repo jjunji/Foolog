@@ -167,3 +167,4 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 /.idea/
+/.idea/markdown-navigator/profiles_settings.xml

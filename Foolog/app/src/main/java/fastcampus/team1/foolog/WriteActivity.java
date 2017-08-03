@@ -8,15 +8,24 @@ import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import fastcampus.team1.foolog.Map.MapsActivity;
+import fastcampus.team1.foolog.model.WriteCreate;
+import fastcampus.team1.foolog.model.WriteListResult;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static fastcampus.team1.foolog.LoginActivity.token;
 
@@ -38,6 +47,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private RadioGroup rgTaste;
     private TextView txtTaste;
     private TextView txtMap;
+    private EditText editContent;
+
+    private WriteCreate writeCreate;
+
+
+
+
+    Intent intent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +97,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         rgTaste = (RadioGroup) findViewById(R.id.rgTaste);
         txtTaste = (TextView) findViewById(R.id.txtTaste);
         txtMap = (TextView) findViewById(R.id.txtMap);
+        editContent = (EditText) findViewById(R.id.editContent);
     }
 
     /**
@@ -90,7 +108,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
      */
     @Override
     public void onClick(View view) {
-        Intent intent = null;
+
         switch (view.getId()) {
             case R.id.btnBack:
                 intent = new Intent(this, MainActivity.class);
@@ -98,8 +116,8 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 break;
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                setData();
+                setNetwork();
                 break;
             case R.id.WriteImage:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -178,4 +196,56 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+
+    private void setData(){
+        String text = editContent.getText().toString();
+
+        writeCreate = new WriteCreate();
+        writeCreate.text = text;
+
+//        writeCreate = temp.pk;
+
+    }
+
+
+    private void setNetwork() {
+        // 레트로핏 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://foolog.jos-project.xyz/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // 인터페이스 불러오기
+        iService service = retrofit.create(iService.class);
+
+
+        String real_token = "Token "+token;
+        Log.e("Token result","====="+token);
+        // 서비스 호출
+        Call<WriteListResult> call = service.createPost(writeCreate, real_token);
+        call.enqueue(new Callback<WriteListResult>() {
+            @Override
+            public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
+                if (response.isSuccessful()) {
+
+//                        String body = response.body().string();
+//                        Log.e("body",""+body);
+
+                    intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+                    int statusCode = response.code();
+                    Log.i("MyTag", "응답코드 ============= "+statusCode);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<WriteListResult> call, Throwable t) {
+                Log.e("Fail", "Fail network===" + t.getMessage());
+            }
+        });
+    }
 }
