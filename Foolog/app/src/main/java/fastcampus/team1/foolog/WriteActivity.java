@@ -18,6 +18,8 @@ import com.bumptech.glide.Glide;
 
 import fastcampus.team1.foolog.Map.MapsActivity;
 
+import static fastcampus.team1.foolog.LoginActivity.token;
+
 public class WriteActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton btnBack;
@@ -45,7 +47,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         initView();
         setListener();
         setRadioGroup();
-
     }
 
     /**
@@ -176,6 +177,5 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
-
 
 }
