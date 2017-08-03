@@ -24,7 +24,7 @@ public interface iService {
 
     //todo Call 앞부분은 받는걸 써야한다
     @POST("post/")
-    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String real_token); //todo Header 에 실으기
+    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header 에 실으기
 
 
 //    @POST("post/")

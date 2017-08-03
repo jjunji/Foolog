@@ -1,6 +1,8 @@
 package fastcampus.team1.foolog;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,8 +29,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static fastcampus.team1.foolog.LoginActivity.token;
-
 public class WriteActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton btnBack;
@@ -50,9 +50,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private EditText editContent;
 
     private WriteCreate writeCreate;
-
-
-
 
     Intent intent = null;
 
@@ -175,7 +172,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-
         rgTaste.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
@@ -193,9 +189,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-
     }
-
 
     private void setData(){
         String text = editContent.getText().toString();
@@ -207,8 +201,17 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-
     private void setNetwork() {
+        SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
+        String shared_token = storage.getString("inputToken"," ");
+
+        String send_token = "Token "+shared_token;
+
+/*        String shared_token = storage.getString("inputToken"," ");
+        String send_token = "Token "+shared_token;*/
+        Log.e("WriteActivity","shared_token=========="+shared_token);
+        Log.e("WriteActivity","send_token=========="+send_token);
+
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://foolog.jos-project.xyz/api/")
@@ -217,24 +220,21 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         // 인터페이스 불러오기
         iService service = retrofit.create(iService.class);
-
-
-        String real_token = "Token "+token;
-        Log.e("Token result","====="+token);
+        //String real_token = "Token "+token;
         // 서비스 호출
-        Call<WriteListResult> call = service.createPost(writeCreate, real_token);
+        Call<WriteListResult> call = service.createPost(writeCreate, send_token);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
+
                 if (response.isSuccessful()) {
 
 //                        String body = response.body().string();
 //                        Log.e("body",""+body);
 
-                    intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
                     Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
-                    finish();
                 }else{
                     int statusCode = response.code();
                     Log.i("MyTag", "응답코드 ============= "+statusCode);

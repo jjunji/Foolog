@@ -29,19 +29,15 @@ public class WriteListResult {
     }
 
     // todo 태그 부분 체크
-
-    public Tag tags;
+    public Tag[] tags;
 
     public class Tag{
-       ArrayList<tag>tag;
-        public class tag{
-            String text;
-            String type;
-            String color;
-        }
+        String text;
+        String type;
+        String color;
     }
     // todo date 타입이 맞는지 , photo타입은 어떻게 해야하는지
-    public Date date;
-    public String photo;
+    public String date;
+    public String photo; // String 으로 주소로 받는다
 
 }
