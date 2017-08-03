@@ -33,9 +33,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText txtEmail, txtPassword;
     private Button btnLogin, btnSignUp;
     private Intent intent;
-    private String token; // 가입 시 생성되는 token 저장
+    static String token; // 가입 시 생성되는 token 저장
     private String loginId, loginPwd;  // SharedPreferences 사용을 위한 id, pwd 선언
     private Login login;
+    SharedPreferences storage;
+    SharedPreferences.Editor autoLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +83,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // 저장된 키 값이 없다면 로그인 정보 저장
     private void setStorage(){
         if(loginId == null && loginPwd == null) {
-            SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
-            SharedPreferences.Editor autoLogin = storage.edit();
+            storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
+            autoLogin = storage.edit();
 
+            autoLogin.putString("inputToken",token);
             autoLogin.putString("inputId", txtEmail.getText().toString());
             autoLogin.putString("inputPwd", txtPassword.getText().toString());
 
