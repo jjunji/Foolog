@@ -85,7 +85,6 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.e("Write","in ====== onResponse");
                 if(response.isSuccessful()){
                     Toast.makeText(getBaseContext(),"등록되었습니다.", Toast.LENGTH_SHORT).show();
-                    finish();
                 }else{
                     int statusCode = response.code();
                     Log.i("MyTag", "응답코드 ============= "+statusCode);
