@@ -15,6 +15,4 @@ public class WriteCreate {
     public Float longitude; // 경도
     public Float latitude; // 위도
     public String memo; // 지역에 대한 메모
-
-
 }
