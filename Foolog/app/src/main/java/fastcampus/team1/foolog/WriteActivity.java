@@ -1,8 +1,10 @@
 package fastcampus.team1.foolog;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,9 +22,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
+
 import fastcampus.team1.foolog.Map.MapsActivity;
 import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +56,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private TextView txtMap;
     private EditText editContent;
 
+    String imagePath;
     private WriteCreate writeCreate;
 
     Intent intent = null;
@@ -114,6 +122,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
                 setData();
+                uploadFile();
                 setNetwork();
                 break;
             case R.id.WriteImage:
@@ -136,10 +145,25 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
-            Log.e("Gallery", "imageUri====" + imageUri.getPath());
-            Glide.with(getBaseContext())
-                    .load(imageUri)
-                    .into(WriteImage);
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
+
+            if (cursor!=null){
+                cursor.moveToFirst();
+                Log.e("WriteActivity", "imageUri====" + imageUri.getPath());
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                Log.e("WriteActivity", "columnIndex===" + columnIndex);
+                imagePath = cursor.getString(columnIndex);
+                Log.e("WriteActivity", "imagePath===" + imagePath);
+                Glide.with(getBaseContext())
+                        .load(imageUri)
+                        .into(WriteImage);
+                cursor.close();
+            }else{
+                Toast.makeText(getBaseContext(),"이미지를 로드할수 없습니다",Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -191,26 +215,29 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void setData(){
+    private void setData() {
         String text = editContent.getText().toString();
 
         writeCreate = new WriteCreate();
         writeCreate.text = text;
 
-//        writeCreate = temp.pk;
+//        byte[] photo = imagePath.getBytes();
+//        writeCreate.photo = photo;
+
+
 
     }
 
     private void setNetwork() {
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
-        String shared_token = storage.getString("inputToken"," ");
+        String shared_token = storage.getString("inputToken", " ");
 
-        String send_token = "Token "+shared_token;
+        String send_token = "Token " + shared_token;
 
 /*        String shared_token = storage.getString("inputToken"," ");
         String send_token = "Token "+shared_token;*/
-        Log.e("WriteActivity","shared_token=========="+shared_token);
-        Log.e("WriteActivity","send_token=========="+send_token);
+        Log.e("WriteActivity", "shared_token==========" + shared_token);
+        Log.e("WriteActivity", "send_token==========" + send_token);
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
@@ -234,10 +261,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
-                    Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
-                }else{
+                    Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
+                } else {
                     int statusCode = response.code();
-                    Log.i("MyTag", "응답코드 ============= "+statusCode);
+                    Log.i("WriteActivity", "text 응답코드 ============= " + statusCode);
                 }
 
             }
@@ -248,4 +275,62 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
+    private void uploadFile() {
+
+        SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
+        String shared_token = storage.getString("inputToken", " ");
+
+        String send_token = "Token " + shared_token;
+
+        Log.e("WriteActivity", "shared_token==========" + shared_token);
+        Log.e("WriteActivity", "send_token==========" + send_token);
+
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("현재 이미지를 전송중입니다...");
+        progressDialog.show();
+
+        // 레트로핏 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://foolog.jos-project.xyz/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // 인터페이스 불러오기
+        iService service = retrofit.create(iService.class);
+
+
+        File file = new File(imagePath);
+        Log.e("WriteActivity", "file===="+file);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+        Log.e("WriteActivity", "requestFile===="+requestFile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image",file.getName(),requestFile);
+        Log.e("WriteActivity", "body===="+body);
+
+
+        Call<WriteListResult> call = service.uploadImage(body, send_token);
+        call.enqueue(new Callback<WriteListResult>() {
+            @Override
+            public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    Toast.makeText(getBaseContext(), "이미지 업로드 완료",Toast.LENGTH_SHORT).show();
+                } else {
+                    int statusCode = response.code();
+                    Log.i("WriteActivity", "image 응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WriteListResult> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+
+    }
+
+
+
+
 }
