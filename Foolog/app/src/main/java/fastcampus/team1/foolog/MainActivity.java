@@ -10,7 +10,9 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,14 +27,12 @@ import android.widget.Toast;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.util.PermissionControl;
+import me.huseyinozer.TooltipIndicator;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, PermissionControl.CallBack {
 
-    private TextView txtMonth;
-    private GridView monthView;
-    //private ArrayList<String> dayList;
-    private CalendarAdapter adapter;
+    private TooltipIndicator indicator;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -42,7 +42,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initView();
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        indicator = (TooltipIndicator) findViewById(R.id.tooltip_indicator);
+
+        Fragment[] arr = new Fragment[2];
+        arr[0] = new CalendarFragment();
+        arr[1] = new ListFragment();
+
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), arr);
+        viewPager.setAdapter(adapter);
+        indicator.setupViewPager(viewPager);
 
         // 앱 실행시 권한을 사용하게끔 나타낸다.
         PermissionControl.checkVersion(this);
@@ -56,15 +65,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-/*        Button btnWrite = (Button) findViewById(R.id.btnWrite);
-        btnWrite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), WriteActivity.class);
-                startActivity(intent);
-            }
-        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toast.makeText(this, "버튼 눌림", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getBaseContext(), WriteActivity.class);
+        startActivity(intent);
         return super.onOptionsItemSelected(item);
     }
 
@@ -148,39 +149,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void init() {
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void initView() {
-        txtMonth = (TextView) findViewById(R.id.txtMonth);
-        monthView = (GridView) findViewById(R.id.monthView);
-        adapter = new CalendarAdapter(getApplicationContext());
-        monthView.setAdapter(adapter);
-        adapter.setNowMonth();
-        txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
-
-        Button btnPrevious = (Button) findViewById(R.id.btnPrevious);
-
-        // 이전 월을 설정하고 그대로 표시됨.
-        btnPrevious.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                adapter.setPreviousMonth();
-                txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
-                //어댑터가 바뀌었으니 notifyDataSetChanged
-                adapter.notifyDataSetChanged();
-            }
-        });
-        Button btnNext = (Button) findViewById(R.id.btnNext);
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                adapter.setNextMonth();
-                txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
-                adapter.notifyDataSetChanged();
-            }
-        });
 
     }
 }
