@@ -247,11 +247,17 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     private void setData() {
         String text = editContent.getText().toString();
+        Log.e("WriteActivity","txtFood==="+txtFood);
+        Log.e("WriteActivity","txtTaste==="+txtTaste);
+        String tags = txtFood.getText().toString()+","+txtTaste.getText().toString();
+        Log.e("WriteActivity","tags==="+tags);
+
+
 
         writeCreate = new WriteCreate();
         writeCreate.text = text;
+        writeCreate.tags = tags;
 
-//        writeCreate = temp.pk;
 
     }
 
