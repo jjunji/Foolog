@@ -52,6 +52,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private WriteCreate writeCreate;
 
     Intent intent = null;
+    private ImageView tagimgKorea;
+    private ImageView tagimgJapan;
+    private ImageView tagimgChina;
+    private ImageView tagimgUsa;
+    private ImageView tagimgEtc;
+    private ImageView tagimgGood;
+    private ImageView tagimgSoso;
+    private ImageView tagimgBad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +103,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         txtTaste = (TextView) findViewById(R.id.txtTaste);
         txtMap = (TextView) findViewById(R.id.txtMap);
         editContent = (EditText) findViewById(R.id.editContent);
+        tagimgKorea = (ImageView) findViewById(R.id.tagimgKorea);
+        tagimgJapan = (ImageView) findViewById(R.id.tagimgJapan);
+        tagimgChina = (ImageView) findViewById(R.id.tagimgChina);
+        tagimgUsa = (ImageView) findViewById(R.id.tagimgUsa);
+        tagimgEtc = (ImageView) findViewById(R.id.tagimgEtc);
+        tagimgGood = (ImageView) findViewById(R.id.tagimgGood);
+        tagimgSoso = (ImageView) findViewById(R.id.tagimgSoso);
+        tagimgBad = (ImageView) findViewById(R.id.tagimgBad);
     }
 
     /**
@@ -154,21 +170,49 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
                 switch (checkedId) {
                     case R.id.radioBtnKorea:
-                        txtFood.setText(radioBtnKorea.getText().toString());
+                        txtFood.setText("한식");
+                        tagimgKorea.setVisibility(View.VISIBLE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnJapan:
-                        txtFood.setText(radioBtnJapan.getText().toString());
+                        txtFood.setText("일식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.VISIBLE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnChina:
-                        txtFood.setText(radioBtnChina.getText().toString());
+                        txtFood.setText("중식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.VISIBLE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnUsa:
-                        txtFood.setText(radioBtnUsa.getText().toString());
+                        txtFood.setText("양식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.VISIBLE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnEtc:
-                        txtFood.setText(radioBtnEtc.getText().toString());
+                        txtFood.setText("기타");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.VISIBLE);
                         break;
                 }
+                txtFood.setVisibility(View.GONE);
+
+
             }
         });
 
@@ -177,21 +221,31 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 switch (i) {
                     case R.id.radioBtnGood:
-                        txtTaste.setText(radioBtnGood.getText().toString());
+                        txtTaste.setText("Good");
+                        tagimgGood.setVisibility(View.VISIBLE);
+                        tagimgSoso.setVisibility(View.GONE);
+                        tagimgBad.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnSoso:
-                        txtTaste.setText(radioBtnSoso.getText().toString());
+                        txtTaste.setText("Soso");
+                        tagimgGood.setVisibility(View.GONE);
+                        tagimgSoso.setVisibility(View.VISIBLE);
+                        tagimgBad.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnBad:
-                        txtTaste.setText(radioBtnBad.getText().toString());
+                        txtTaste.setText("Bad");
+                        tagimgGood.setVisibility(View.GONE);
+                        tagimgSoso.setVisibility(View.GONE);
+                        tagimgBad.setVisibility(View.VISIBLE);
                         break;
                 }
+                txtTaste.setVisibility(View.GONE);
             }
         });
 
     }
 
-    private void setData(){
+    private void setData() {
         String text = editContent.getText().toString();
 
         writeCreate = new WriteCreate();
@@ -203,14 +257,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     private void setNetwork() {
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
-        String shared_token = storage.getString("inputToken"," ");
+        String shared_token = storage.getString("inputToken", " ");
 
-        String send_token = "Token "+shared_token;
+        String send_token = "Token " + shared_token;
 
 /*        String shared_token = storage.getString("inputToken"," ");
         String send_token = "Token "+shared_token;*/
-        Log.e("WriteActivity","shared_token=========="+shared_token);
-        Log.e("WriteActivity","send_token=========="+send_token);
+        Log.e("WriteActivity", "shared_token==========" + shared_token);
+        Log.e("WriteActivity", "send_token==========" + send_token);
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
@@ -234,10 +288,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
-                    Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
-                }else{
+                    Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
+                } else {
                     int statusCode = response.code();
-                    Log.i("MyTag", "응답코드 ============= "+statusCode);
+                    Log.i("MyTag", "응답코드 ============= " + statusCode);
                 }
 
             }

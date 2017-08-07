@@ -128,14 +128,72 @@
                     android:paddingBottom="8dp"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/tagimgKorea"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_korea"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgJapan"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_japan"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgChina"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_china"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgUsa"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_usa"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgEtc"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_etc"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/txtTaste"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/select_taste" />
+                    android:hint="@string/select_taste"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/tagimgGood"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_good"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgSoso"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_soso"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/tagimgBad"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/tag_circle_bad"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <RadioGroup
@@ -148,38 +206,44 @@
 
                 <RadioButton
                     android:id="@+id/radioBtnKorea"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_korea" />
+                    android:background="@drawable/radio_tag_korea"
+                    android:button="@null"
+                    android:elevation="24dp" />
 
                 <RadioButton
                     android:id="@+id/radioBtnJapan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_japan" />
+                    android:background="@drawable/radio_tag_japan"
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radioBtnChina"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_china" />
+                    android:background="@drawable/radio_tag_china"
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radioBtnUsa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_usa" />
+                    android:background="@drawable/radio_tag_usa"
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radioBtnEtc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_etc" />
+                    android:background="@drawable/radio_tag_etc"
+                    android:button="@null" />
 
             </RadioGroup>
 
@@ -193,23 +257,26 @@
                 <RadioButton
                     android:id="@+id/radioBtnGood"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_good" />
+                    android:background="@drawable/radio_tag_good"
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radioBtnSoso"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_soso" />
+                    android:background="@drawable/radio_tag_soso"
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radioBtnBad"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:layout_weight="1"
-                    android:text="@string/tag_bad" />
+                    android:background="@drawable/radio_tag_bad"
+                    android:button="@null" />
 
             </RadioGroup>
 
@@ -253,7 +320,10 @@
             android:layout_height="16dp"
             android:layout_weight="1" />
 
-
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/tag_circle_korea"/>
 
     </LinearLayout>
 </ScrollView>
