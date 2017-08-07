@@ -17,10 +17,10 @@
 
         <Button
             android:id="@+id/btnPrevious"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/backward" />
+            android:background="@drawable/back" />
 
         <!-- 선택된 년,월 표시하기 위한 뷰-->
         <TextView
@@ -35,17 +35,17 @@
 
         <Button
             android:id="@+id/btnNext"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/forward" />
+            android:background="@drawable/next" />
 
     </RelativeLayout>
 
     <GridView
         android:id="@+id/monthView"
         android:layout_width="match_parent"
-        android:layout_height="341dp"
+        android:layout_height="400dp"
         android:horizontalSpacing="1dp"
         android:numColumns="7"
         android:stretchMode="columnWidth"
