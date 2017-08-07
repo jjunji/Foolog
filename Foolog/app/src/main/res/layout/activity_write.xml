@@ -309,6 +309,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
+                android:lines="5"
+                android:scrollbars="vertical"
                 android:hint="@string/write_text"
                 android:inputType="textMultiLine"
                 android:padding="8dp" />
@@ -320,10 +322,9 @@
             android:layout_height="16dp"
             android:layout_weight="1" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@drawable/tag_circle_korea"/>
+        <!--<Space-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="100dp"/>-->
 
     </LinearLayout>
 </ScrollView>
