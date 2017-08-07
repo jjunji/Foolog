@@ -23,9 +23,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
-import fastcampus.team1.foolog.Calendar.MonthAdapter;
+import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.util.PermissionControl;
 
 public class MainActivity extends AppCompatActivity
@@ -33,9 +31,10 @@ public class MainActivity extends AppCompatActivity
 
     private TextView txtMonth;
     private GridView monthView;
-    private ArrayList<String> dayList;
-    MonthAdapter adapter;
+    //private ArrayList<String> dayList;
+    private CalendarAdapter adapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,20 +51,20 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getBaseContext(), WriteActivity.class);
+                startActivity(intent);
             }
         });
 
 
-        Button btnWrite = (Button) findViewById(R.id.btnWrite);
+/*        Button btnWrite = (Button) findViewById(R.id.btnWrite);
         btnWrite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getBaseContext(), WriteActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -144,18 +143,10 @@ public class MainActivity extends AppCompatActivity
     private void initView() {
         txtMonth = (TextView) findViewById(R.id.txtMonth);
         monthView = (GridView) findViewById(R.id.monthView);
-
-        dayList = new ArrayList<String>();
-        dayList.add("일");
-        dayList.add("월");
-        dayList.add("화");
-        dayList.add("수");
-        dayList.add("목");
-        dayList.add("금");
-        dayList.add("토");
-
-        adapter = new MonthAdapter();
+        adapter = new CalendarAdapter(getApplicationContext());
         monthView.setAdapter(adapter);
+        adapter.setNowMonth();
+        txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
 
         Button btnPrevious = (Button) findViewById(R.id.btnPrevious);
 

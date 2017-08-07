@@ -14,7 +14,7 @@ import fastcampus.team1.foolog.R;
  */
 
 // 필수 생성자 2개
-public class MonthItemView extends RelativeLayout {
+public class MonthItemView extends RelativeLayout{
 
     TextView textView;
 
@@ -41,14 +41,16 @@ public class MonthItemView extends RelativeLayout {
      position 값을 7로 나누어 나머지가 0일 경우는 일요일을 뜻하므로 조건문으로 판단하여 텍스트를 붉게 표시함.
     */
     // 달력(그리드 뷰)에 날짜를 설정
-    public void setDay(int day, int position){
+    public void setDay(String day,int position){
         if( position % 7 == 0 ){
             textView.setTextColor(Color.RED);
         }else if( position % 7 == 6 ){
             textView.setTextColor(Color.BLUE);
+        } else{
+            textView.setTextColor(Color.BLACK);
         }
-        // day(숫자) -> 문자로
-        textView.setText(String.valueOf(day));
+
+        textView.setText(day);
     }
 }
 
