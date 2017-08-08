@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import fastcampus.team1.foolog.Map.MapsActivity;
-import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -62,8 +61,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private EditText editContent;
 
     String imagePath;
-    private WriteCreate writeCreate;
-
     Intent intent = null;
     private ImageView tagimgKorea;
     private ImageView tagimgJapan;
@@ -142,9 +139,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 break;
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
-//                setData();
                 uploadFile();
-//                setNetwork();
                 break;
             case R.id.WriteImage:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -240,8 +235,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                         break;
                 }
                 txtFood.setVisibility(View.GONE);
-
-
             }
         });
 
@@ -274,75 +267,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-//    private void setData() {
-//        String text = editContent.getText().toString();
-//        Log.e("WriteActivity", "txtFood===" + txtFood);
-//        Log.e("WriteActivity", "txtTaste===" + txtTaste);
-//        String tags = txtFood.getText().toString() + "," + txtTaste.getText().toString();
-//        Log.e("WriteActivity", "tags===" + tags);
-//
-//
-//        writeCreate = new WriteCreate();
-//        writeCreate.text = text;
-//        writeCreate.tags = tags;
-//
-//
-////        byte[] photo = imagePath.getBytes();
-////        writeCreate.photo = photo;
-//
-//    }
 
-    private void setNetwork() {
-        SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
-        String shared_token = storage.getString("inputToken", " ");
-
-        String send_token = "Token " + shared_token;
-
-/*        String shared_token = storage.getString("inputToken"," ");
-        String send_token = "Token "+shared_token;*/
-        Log.e("WriteActivity", "shared_token==========" + shared_token);
-        Log.e("WriteActivity", "send_token==========" + send_token);
-
-        // 레트로핏 정의
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        // 인터페이스 불러오기
-        iService service = retrofit.create(iService.class);
-        //String real_token = "Token "+token;
-        // 서비스 호출
-        Call<WriteListResult> call = service.createPost(writeCreate, send_token);
-        call.enqueue(new Callback<WriteListResult>() {
-            @Override
-            public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
-
-                if (response.isSuccessful()) {
-
-//                        String body = response.body().string();
-//                        Log.e("body",""+body);
-
-                    intent = new Intent(WriteActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    Toast.makeText(getBaseContext(), "Success", Toast.LENGTH_SHORT).show();
-                } else {
-                    int statusCode = response.code();
-
-                    Log.i("WriteActivity", "text 응답코드 ============= " + statusCode);
-
-                    Log.i("MyTag", "응답코드 ============= " + statusCode);
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<WriteListResult> call, Throwable t) {
-                Log.e("Fail", "Fail network===" + t.getMessage());
-            }
-        });
-    }
 
     private void uploadFile() {
 
