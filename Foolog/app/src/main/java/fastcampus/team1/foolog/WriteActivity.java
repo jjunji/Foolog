@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import fastcampus.team1.foolog.Map.MapsActivity;
@@ -29,7 +32,9 @@ import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -137,9 +142,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 break;
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
-                setData();
+//                setData();
                 uploadFile();
-                setNetwork();
+//                setNetwork();
                 break;
             case R.id.WriteImage:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -173,7 +178,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 imagePath = cursor.getString(columnIndex);
                 Log.e("WriteActivity", "imagePath===" + imagePath);
                 Glide.with(getBaseContext())
-                        .load(imageUri)
+                        .load(new File(imagePath))
                         .into(WriteImage);
                 cursor.close();
             }else{
@@ -355,10 +360,15 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setMessage("현재 이미지를 전송중입니다...");
         progressDialog.show();
 
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
+
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://foolog.jos-project.xyz/api/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
 
         // 인터페이스 불러오기
@@ -366,20 +376,48 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
 
         File file = new File(imagePath);
-        Log.e("WriteActivity", "file===="+file);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
-        Log.e("WriteActivity", "requestFile===="+requestFile);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image",file.getName(),requestFile);
-        Log.e("WriteActivity", "body===="+body);
+        Log.e("WriteActivity","file(imagePath)===="+file);
+        Log.e("WriteActivity","file.getname==="+file.getName());
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
 
 
-        Call<WriteListResult> call = service.uploadImage(body, send_token);
+
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inSampleSize = 2; // 이미지의 사이즈를 1/8로 축소
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
+        // 비트맵을 바이트 어레이로 변경
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        // Compress the bitmap to jpeg format and 50% image quality
+        bitmap.compress(Bitmap.CompressFormat.JPEG,50,stream);
+
+        // Create a byte array from ByteArrayOutputStream
+        byte[] byteArray = stream.toByteArray();
+
+        RequestBody imageFile = RequestBody.create(MediaType.parse("image/*"),byteArray);
+
+
+        MultipartBody.Part photo = MultipartBody.Part.createFormData("photo",file.getName(), imageFile);
+//        MultipartBody.Part text = MultipartBody.Part.createFormData("text", editContent.getText().toString());
+//        MultipartBody.Part tags = MultipartBody.Part.createFormData("tags",txtFood.getText().toString()+","+txtTaste.getText().toString());
+
+
+        RequestBody text  = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
+        RequestBody tags  = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString()+","+txtTaste.getText().toString());
+
+
+        Call<WriteListResult> call = service.uploadImage(send_token,photo,text,tags);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
-                    Toast.makeText(getBaseContext(), "이미지 업로드 완료",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다",Toast.LENGTH_SHORT).show();
+                    intent = new Intent(WriteActivity.this, MainActivity.class);
+                    startActivity(intent);
                 } else {
                     int statusCode = response.code();
                     Log.i("WriteActivity", "image 응답코드 ============= " + statusCode);

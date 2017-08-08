@@ -6,6 +6,7 @@ import fastcampus.team1.foolog.model.LoginResult;
 import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
@@ -31,7 +32,15 @@ public interface iService {
 
     @Multipart
     @POST("post/")
-    Call<WriteListResult> uploadImage( @Part MultipartBody.Part file, @Header ("Authorization") String send_token);
+    Call<WriteListResult> uploadImage(@Header("Authorization") String send_token,
+                                      @Part MultipartBody.Part photo,
+                                      @Part("text") RequestBody text,
+                                      @Part("tags") RequestBody tags
+//                                      @Part MultipartBody.Part date,
+//                                      @Part MultipartBody.Part longitude,
+//                                      @Part MultipartBody.Part latitude,
+//                                      @Part MultipartBody.Part memo
+                                        );
 
 //    @POST("post/")
 //    Call<ResponseBody> createPost2(@Body WriteCreate writeCreate, @Header("Authorization") String real_token);
