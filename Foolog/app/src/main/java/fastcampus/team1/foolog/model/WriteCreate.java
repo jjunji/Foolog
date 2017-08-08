@@ -1,7 +1,5 @@
 package fastcampus.team1.foolog.model;
 
-import java.util.Date;
-
 /**
  * Created by SeungHoShin on 2017. 8. 3..
  */
