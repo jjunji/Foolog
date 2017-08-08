@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fastcampus.team1.foolog.model.Login;
@@ -32,8 +33,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button btnLogin, btnSignUp;
     private Intent intent;
     static String token; // 가입 시 생성되는 token 저장
+    private int pk;
     private String loginId, loginPwd;  // SharedPreferences 사용을 위한 id, pwd 선언
     private Login login;
+    private String email, nickName;
 /*    static SharedPreferences storage;
     static SharedPreferences.Editor autoLogin;*/
 
@@ -84,6 +87,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
             SharedPreferences.Editor autoLogin = storage.edit();
 
+            autoLogin.putString("inputEmail",email);
+            autoLogin.putString("inputNickName",nickName);
+            //autoLogin.putInt("inputPk",pk); // user pk 값 저장. -> Navi 프로필.
             autoLogin.putString("inputToken",token);  // 토큰 저장.
             autoLogin.putString("inputId", txtEmail.getText().toString()); // email 저장.
             autoLogin.putString("inputPwd", txtPassword.getText().toString()); // 비밀번호 저장.
@@ -120,8 +126,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.e("Write","in ====== onResponse");
                 if(response.isSuccessful()){
                     LoginResult loginResult = response.body(); // 로그인시 생성되는 객체는 loginResult 형태.
+                    email = loginResult.user.email;
+                    nickName = loginResult.user.nickname;
                     token = loginResult.key;
-                    int pk = loginResult.user.pk;
+                    pk = loginResult.user.pk;
                     Log.e("LoginActivity", "token =====================" +token);
                     Log.e("LoginActivity", "pk=========================" + pk);
                     Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();

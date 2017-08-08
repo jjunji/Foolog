@@ -9,6 +9,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -28,7 +29,8 @@ public interface iService {
 
     //todo Call 앞부분은 받는걸 써야한다
     @POST("post/")
-    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header 에 실으기
+    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header
+
 
     // @Part() 안에있는것이 의미하는건 서버에서 안에있는 텍스트로 인식하게끔 만들어준다.(Server Api랑 일치)
     @Multipart
@@ -42,4 +44,6 @@ public interface iService {
 //                                      @Part MultipartBody.Part latitude,
 //                                      @Part MultipartBody.Part memo
                                         );
+
+
 }
