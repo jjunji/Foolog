@@ -35,26 +35,23 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     Fragment[] arr;
     ViewPager viewPager;
+    MyPagerAdapter adapter;
+    DrawerLayout drawer;
+    ActionBarDrawerToggle toggle;
+    Toolbar toolbar;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        indicator = (TooltipIndicator) findViewById(R.id.tooltip_indicator);
-
+        initView();
         setFragment();
-
-        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), arr);
-        viewPager.setAdapter(adapter);
-        indicator.setupViewPager(viewPager);
-
-        // 앱 실행시 권한을 사용하게끔 나타낸다.
-        PermissionControl.checkVersion(this);
+        setAdapter();
+        setNaviView();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,20 +62,31 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+    }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+    public void initView(){
+        // 앱 실행시 권한을 사용하게끔 나타낸다.
+        PermissionControl.checkVersion(this);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        indicator = (TooltipIndicator) findViewById(R.id.tooltip_indicator);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        setNaviView();
     }
 
     public void setFragment(){
         arr = new Fragment[2];
         arr[0] = new CalendarFragment();
         arr[1] = new ListFragment();
+    }
+
+    public void setAdapter(){
+        adapter = new MyPagerAdapter(getSupportFragmentManager(), arr);
+        viewPager.setAdapter(adapter);
+        indicator.setupViewPager(viewPager);
     }
 
     public void getPreferences(){
