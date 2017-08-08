@@ -7,6 +7,7 @@ import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
@@ -24,9 +25,6 @@ public interface iService {
 
     //todo Call 앞부분은 받는걸 써야한다
     @POST("post/")
-    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header 에 실으기
+    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header
 
-
-//    @POST("post/")
-//    Call<ResponseBody> createPost2(@Body WriteCreate writeCreate, @Header("Authorization") String real_token);
 }
