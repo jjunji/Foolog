@@ -170,7 +170,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
             Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
 
-            if (cursor!=null){
+            if (cursor != null) {
                 cursor.moveToFirst();
                 Log.e("WriteActivity", "imageUri====" + imageUri.getPath());
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -181,8 +181,8 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                         .load(new File(imagePath))
                         .into(WriteImage);
                 cursor.close();
-            }else{
-                Toast.makeText(getBaseContext(),"이미지를 로드할수 없습니다",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getBaseContext(), "이미지를 로드할수 없습니다", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -274,24 +274,23 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void setData() {
-        String text = editContent.getText().toString();
-        Log.e("WriteActivity","txtFood==="+txtFood);
-        Log.e("WriteActivity","txtTaste==="+txtTaste);
-        String tags = txtFood.getText().toString()+","+txtTaste.getText().toString();
-        Log.e("WriteActivity","tags==="+tags);
-
-
-
-        writeCreate = new WriteCreate();
-        writeCreate.text = text;
-        writeCreate.tags = tags;
-
-
-//        byte[] photo = imagePath.getBytes();
-//        writeCreate.photo = photo;
-
-    }
+//    private void setData() {
+//        String text = editContent.getText().toString();
+//        Log.e("WriteActivity", "txtFood===" + txtFood);
+//        Log.e("WriteActivity", "txtTaste===" + txtTaste);
+//        String tags = txtFood.getText().toString() + "," + txtTaste.getText().toString();
+//        Log.e("WriteActivity", "tags===" + tags);
+//
+//
+//        writeCreate = new WriteCreate();
+//        writeCreate.text = text;
+//        writeCreate.tags = tags;
+//
+//
+////        byte[] photo = imagePath.getBytes();
+////        writeCreate.photo = photo;
+//
+//    }
 
     private void setNetwork() {
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
@@ -357,9 +356,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("현재 이미지를 전송중입니다...");
+        progressDialog.setMessage("글작성 중입니다 잠시만 기달려주세요...");
         progressDialog.show();
 
+        // okhttp log interceptor 사용
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
@@ -375,47 +375,51 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         iService service = retrofit.create(iService.class);
 
 
-        File file = new File(imagePath);
-        Log.e("WriteActivity","file(imagePath)===="+file);
-        Log.e("WriteActivity","file.getname==="+file.getName());
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+        MultipartBody.Part photo = null;
+
+        if(imagePath != null){
+            File file = new File(imagePath);
+            Log.e("WriteActivity", "file(imagePath)====" + file);
+            Log.e("WriteActivity", "file.getname===" + file.getName());
+    //        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
 
 
+            // 이미지를 비트맵으로 변환하는 옵션을 만들어준다
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inSampleSize = 2; // 이미지의 사이즈를 1/2로 축소
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
+
+            // 비트맵을 바이트 어레이로 변경 --> 이미지를 축소하려면 변경해야되고 , 전송까지 하려면 변경해야된다
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            // Compress the bitmap to jpeg format and 50% image quality --> 크기줄인것을 압축을 하는 작업이다. (용량을줄인다)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
+            // Create a byte array from ByteArrayOutputStream  --> JPEG 포맷을 서버와의 통신을 위해 바이트어레이로 변경
+            byte[] byteArray = stream.toByteArray();
 
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        options.inSampleSize = 2; // 이미지의 사이즈를 1/8로 축소
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+            RequestBody imageFile = RequestBody.create(MediaType.parse("image/*"), byteArray);
 
-        // 비트맵을 바이트 어레이로 변경
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo = MultipartBody.Part.createFormData("photo", file.getName(), imageFile);
+        }
 
-        // Compress the bitmap to jpeg format and 50% image quality
-        bitmap.compress(Bitmap.CompressFormat.JPEG,50,stream);
-
-        // Create a byte array from ByteArrayOutputStream
-        byte[] byteArray = stream.toByteArray();
-
-        RequestBody imageFile = RequestBody.create(MediaType.parse("image/*"),byteArray);
-
-
-        MultipartBody.Part photo = MultipartBody.Part.createFormData("photo",file.getName(), imageFile);
 //        MultipartBody.Part text = MultipartBody.Part.createFormData("text", editContent.getText().toString());
 //        MultipartBody.Part tags = MultipartBody.Part.createFormData("tags",txtFood.getText().toString()+","+txtTaste.getText().toString());
 
 
-        RequestBody text  = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
-        RequestBody tags  = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString()+","+txtTaste.getText().toString());
+        RequestBody text = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
+        RequestBody tags = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString() + "," + txtTaste.getText().toString());
 
 
-        Call<WriteListResult> call = service.uploadImage(send_token,photo,text,tags);
+        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
-                    Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다", Toast.LENGTH_SHORT).show();
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
@@ -431,8 +435,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         });
 
     }
-
-
 
 
 }

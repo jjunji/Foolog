@@ -30,6 +30,7 @@ public interface iService {
     @POST("post/")
     Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header 에 실으기
 
+    // @Part() 안에있는것이 의미하는건 서버에서 안에있는 텍스트로 인식하게끔 만들어준다.(Server Api랑 일치)
     @Multipart
     @POST("post/")
     Call<WriteListResult> uploadImage(@Header("Authorization") String send_token,
@@ -41,7 +42,4 @@ public interface iService {
 //                                      @Part MultipartBody.Part latitude,
 //                                      @Part MultipartBody.Part memo
                                         );
-
-//    @POST("post/")
-//    Call<ResponseBody> createPost2(@Body WriteCreate writeCreate, @Header("Authorization") String real_token);
 }
