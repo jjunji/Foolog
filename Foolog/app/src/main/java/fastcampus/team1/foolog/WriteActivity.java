@@ -1,8 +1,12 @@
 package fastcampus.team1.foolog;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,9 +24,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
 import fastcampus.team1.foolog.Map.MapsActivity;
-import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,9 +60,16 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private TextView txtMap;
     private EditText editContent;
 
-    private WriteCreate writeCreate;
-
+    String imagePath;
     Intent intent = null;
+    private ImageView tagimgKorea;
+    private ImageView tagimgJapan;
+    private ImageView tagimgChina;
+    private ImageView tagimgUsa;
+    private ImageView tagimgEtc;
+    private ImageView tagimgGood;
+    private ImageView tagimgSoso;
+    private ImageView tagimgBad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +113,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         txtTaste = (TextView) findViewById(R.id.txtTaste);
         txtMap = (TextView) findViewById(R.id.txtMap);
         editContent = (EditText) findViewById(R.id.editContent);
+        tagimgKorea = (ImageView) findViewById(R.id.tagimgKorea);
+        tagimgJapan = (ImageView) findViewById(R.id.tagimgJapan);
+        tagimgChina = (ImageView) findViewById(R.id.tagimgChina);
+        tagimgUsa = (ImageView) findViewById(R.id.tagimgUsa);
+        tagimgEtc = (ImageView) findViewById(R.id.tagimgEtc);
+        tagimgGood = (ImageView) findViewById(R.id.tagimgGood);
+        tagimgSoso = (ImageView) findViewById(R.id.tagimgSoso);
+        tagimgBad = (ImageView) findViewById(R.id.tagimgBad);
     }
 
     /**
@@ -113,8 +139,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 break;
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
-                setData();
-                setNetwork();
+                uploadFile();
                 break;
             case R.id.WriteImage:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -136,10 +161,25 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
-            Log.e("Gallery", "imageUri====" + imageUri.getPath());
-            Glide.with(getBaseContext())
-                    .load(imageUri)
-                    .into(WriteImage);
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
+
+            if (cursor != null) {
+                cursor.moveToFirst();
+                Log.e("WriteActivity", "imageUri====" + imageUri.getPath());
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                Log.e("WriteActivity", "columnIndex===" + columnIndex);
+                imagePath = cursor.getString(columnIndex);
+                Log.e("WriteActivity", "imagePath===" + imagePath);
+                Glide.with(getBaseContext())
+                        .load(new File(imagePath))
+                        .into(WriteImage);
+                cursor.close();
+            } else {
+                Toast.makeText(getBaseContext(), "이미지를 로드할수 없습니다", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -154,21 +194,47 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
                 switch (checkedId) {
                     case R.id.radioBtnKorea:
-                        txtFood.setText(radioBtnKorea.getText().toString());
+                        txtFood.setText("한식");
+                        tagimgKorea.setVisibility(View.VISIBLE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnJapan:
-                        txtFood.setText(radioBtnJapan.getText().toString());
+                        txtFood.setText("일식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.VISIBLE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnChina:
-                        txtFood.setText(radioBtnChina.getText().toString());
+                        txtFood.setText("중식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.VISIBLE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnUsa:
-                        txtFood.setText(radioBtnUsa.getText().toString());
+                        txtFood.setText("양식");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.VISIBLE);
+                        tagimgEtc.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnEtc:
-                        txtFood.setText(radioBtnEtc.getText().toString());
+                        txtFood.setText("기타");
+                        tagimgKorea.setVisibility(View.GONE);
+                        tagimgJapan.setVisibility(View.GONE);
+                        tagimgChina.setVisibility(View.GONE);
+                        tagimgUsa.setVisibility(View.GONE);
+                        tagimgEtc.setVisibility(View.VISIBLE);
                         break;
                 }
+                txtFood.setVisibility(View.GONE);
             }
         });
 
@@ -177,75 +243,123 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 switch (i) {
                     case R.id.radioBtnGood:
-                        txtTaste.setText(radioBtnGood.getText().toString());
+                        txtTaste.setText("Good");
+                        tagimgGood.setVisibility(View.VISIBLE);
+                        tagimgSoso.setVisibility(View.GONE);
+                        tagimgBad.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnSoso:
-                        txtTaste.setText(radioBtnSoso.getText().toString());
+                        txtTaste.setText("Soso");
+                        tagimgGood.setVisibility(View.GONE);
+                        tagimgSoso.setVisibility(View.VISIBLE);
+                        tagimgBad.setVisibility(View.GONE);
                         break;
                     case R.id.radioBtnBad:
-                        txtTaste.setText(radioBtnBad.getText().toString());
+                        txtTaste.setText("Bad");
+                        tagimgGood.setVisibility(View.GONE);
+                        tagimgSoso.setVisibility(View.GONE);
+                        tagimgBad.setVisibility(View.VISIBLE);
                         break;
                 }
+                txtTaste.setVisibility(View.GONE);
             }
         });
 
     }
 
-    private void setData(){
-        String text = editContent.getText().toString();
 
-        writeCreate = new WriteCreate();
-        writeCreate.text = text;
 
-//        writeCreate = temp.pk;
+    private void uploadFile() {
 
-    }
-
-    private void setNetwork() {
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
-        String shared_token = storage.getString("inputToken"," ");
+        String shared_token = storage.getString("inputToken", " ");
 
-        String send_token = "Token "+shared_token;
+        String send_token = "Token " + shared_token;
 
-/*        String shared_token = storage.getString("inputToken"," ");
-        String send_token = "Token "+shared_token;*/
-        Log.e("WriteActivity","shared_token=========="+shared_token);
-        Log.e("WriteActivity","send_token=========="+send_token);
+        Log.e("WriteActivity", "shared_token==========" + shared_token);
+        Log.e("WriteActivity", "send_token==========" + send_token);
+
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("글작성 중입니다 잠시만 기달려주세요...");
+        progressDialog.show();
+
+        // okhttp log interceptor 사용
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://foolog.jos-project.xyz/api/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
 
         // 인터페이스 불러오기
         iService service = retrofit.create(iService.class);
-        //String real_token = "Token "+token;
-        // 서비스 호출
-        Call<WriteListResult> call = service.createPost(writeCreate, send_token);
+
+
+        MultipartBody.Part photo = null;
+
+        if(imagePath != null){
+            File file = new File(imagePath);
+            Log.e("WriteActivity", "file(imagePath)====" + file);
+            Log.e("WriteActivity", "file.getname===" + file.getName());
+    //        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+
+
+            // 이미지를 비트맵으로 변환하는 옵션을 만들어준다
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inSampleSize = 2; // 이미지의 사이즈를 1/2로 축소
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
+
+            // 비트맵을 바이트 어레이로 변경 --> 이미지를 축소하려면 변경해야되고 , 전송까지 하려면 변경해야된다
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            // Compress the bitmap to jpeg format and 50% image quality --> 크기줄인것을 압축을 하는 작업이다. (용량을줄인다)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
+            // Create a byte array from ByteArrayOutputStream  --> JPEG 포맷을 서버와의 통신을 위해 바이트어레이로 변경
+            byte[] byteArray = stream.toByteArray();
+
+
+            RequestBody imageFile = RequestBody.create(MediaType.parse("image/*"), byteArray);
+
+            photo = MultipartBody.Part.createFormData("photo", file.getName(), imageFile);
+        }
+
+//        MultipartBody.Part text = MultipartBody.Part.createFormData("text", editContent.getText().toString());
+//        MultipartBody.Part tags = MultipartBody.Part.createFormData("tags",txtFood.getText().toString()+","+txtTaste.getText().toString());
+
+
+        RequestBody text = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
+        RequestBody tags = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString() + "," + txtTaste.getText().toString());
+
+
+        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
-
+                progressDialog.dismiss();
                 if (response.isSuccessful()) {
-
-//                        String body = response.body().string();
-//                        Log.e("body",""+body);
-
+                    Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다", Toast.LENGTH_SHORT).show();
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
-                    Toast.makeText(getBaseContext(),"Success", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     int statusCode = response.code();
-                    Log.i("MyTag", "응답코드 ============= "+statusCode);
+                    Log.i("WriteActivity", "image 응답코드 ============= " + statusCode);
                 }
-
             }
 
             @Override
             public void onFailure(Call<WriteListResult> call, Throwable t) {
-                Log.e("Fail", "Fail network===" + t.getMessage());
+                progressDialog.dismiss();
             }
         });
+
     }
+
+
 }
