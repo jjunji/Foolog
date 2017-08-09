@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import fastcampus.team1.foolog.Map.MapsActivity;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -57,7 +56,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private RadioGroup rgFood;
     private RadioGroup rgTaste;
     private TextView txtTaste;
-    private TextView txtMap;
+    private TextView txtAdress;
     private EditText editContent;
 
     String imagePath;
@@ -70,6 +69,8 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private ImageView tagimgGood;
     private ImageView tagimgSoso;
     private ImageView tagimgBad;
+    private EditText editTitle;
+    private EditText editMemo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         btnBack.setOnClickListener(this);
         btnPost.setOnClickListener(this);
         WriteImage.setOnClickListener(this);
-        txtMap.setOnClickListener(this);
+        txtAdress.setOnClickListener(this);
     }
 
     /**
@@ -111,7 +112,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         rgFood = (RadioGroup) findViewById(R.id.rgFood);
         rgTaste = (RadioGroup) findViewById(R.id.rgTaste);
         txtTaste = (TextView) findViewById(R.id.txtTaste);
-        txtMap = (TextView) findViewById(R.id.txtMap);
+        txtAdress = (TextView) findViewById(R.id.txtAdress);
         editContent = (EditText) findViewById(R.id.editContent);
         tagimgKorea = (ImageView) findViewById(R.id.tagimgKorea);
         tagimgJapan = (ImageView) findViewById(R.id.tagimgJapan);
@@ -121,12 +122,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         tagimgGood = (ImageView) findViewById(R.id.tagimgGood);
         tagimgSoso = (ImageView) findViewById(R.id.tagimgSoso);
         tagimgBad = (ImageView) findViewById(R.id.tagimgBad);
+        editTitle = (EditText) findViewById(R.id.editTitle);
+        editMemo = (EditText) findViewById(R.id.editMemo);
     }
 
     /**
      * 버튼 onClick
      * 각각의 onClick 이벤트를 나타내 주었다. btnBack, btnPost은 우선 뒤로가기로 해놨다.
-     * WriteImage에 클릭이 가능하게끔 Clickable을 주었다.  + txtMap에도
+     * WriteImage에 클릭이 가능하게끔 Clickable을 주었다.  + txtAdress에도
      * WriteImage는 선택한 이미지를 돌려받기 위해서 starActivityforResult를 쓴다
      */
     @Override
@@ -145,10 +148,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(Intent.createChooser(intent, "앱을 선택하세요"), 100);
                 break;
-            case R.id.txtMap:
-                intent = new Intent(this, MapsActivity.class);
-                startActivity(intent);
-                break;
+//            case R.id.txtAdress:
+//                intent = new Intent(this, MapsActivity.class);
+//                startActivity(intent);
+//                break;
         }
     }
 
@@ -267,8 +270,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-
-
+    /**
+     * 네트워크 통신하는 함수
+     */
     private void uploadFile() {
 
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
@@ -284,14 +288,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setMessage("글작성 중입니다 잠시만 기달려주세요...");
         progressDialog.show();
 
-        // okhttp log interceptor 사용
+        // okhttp log interceptor 사용해서 자세한 로그값을 확인한다.
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/api/")
+                .baseUrl("http://foolog.jos-project.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -302,11 +306,11 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         MultipartBody.Part photo = null;
 
-        if(imagePath != null){
+        if (imagePath != null) {
             File file = new File(imagePath);
             Log.e("WriteActivity", "file(imagePath)====" + file);
             Log.e("WriteActivity", "file.getname===" + file.getName());
-    //        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+            //        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
 
 
             // 이미지를 비트맵으로 변환하는 옵션을 만들어준다
@@ -333,12 +337,12 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 //        MultipartBody.Part text = MultipartBody.Part.createFormData("text", editContent.getText().toString());
 //        MultipartBody.Part tags = MultipartBody.Part.createFormData("tags",txtFood.getText().toString()+","+txtTaste.getText().toString());
 
-
         RequestBody text = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
         RequestBody tags = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString() + "," + txtTaste.getText().toString());
+        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), editTitle.getText().toString());
+        RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), editMemo.getText().toString());
 
-
-        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags);
+        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {

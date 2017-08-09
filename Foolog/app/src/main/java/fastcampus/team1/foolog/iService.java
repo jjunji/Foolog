@@ -9,7 +9,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -38,11 +37,12 @@ public interface iService {
     Call<WriteListResult> uploadImage(@Header("Authorization") String send_token,
                                       @Part MultipartBody.Part photo,
                                       @Part("text") RequestBody text,
-                                      @Part("tags") RequestBody tags
-//                                      @Part MultipartBody.Part date,
+                                      @Part("tags") RequestBody tags,
+                                      @Part("title") RequestBody title,
+                                      @Part("memo") RequestBody memo
 //                                      @Part MultipartBody.Part longitude,
 //                                      @Part MultipartBody.Part latitude,
-//                                      @Part MultipartBody.Part memo
+//                                      @Part MultipartBody.Part date,
                                         );
 
 

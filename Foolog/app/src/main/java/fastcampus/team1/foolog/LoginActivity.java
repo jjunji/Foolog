@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import fastcampus.team1.foolog.model.Login;
@@ -112,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void setNetwork(){
         // 레트로핏 객체 정의
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/api/")
+                .baseUrl("http://foolog.jos-project.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         // 실제 서비스 인터페이스 생성.
