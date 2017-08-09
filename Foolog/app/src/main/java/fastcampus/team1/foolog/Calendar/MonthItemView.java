@@ -1,5 +1,6 @@
 package fastcampus.team1.foolog.Calendar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -14,7 +15,6 @@ import fastcampus.team1.foolog.R;
  * Created by jhjun on 2017-08-04.
  */
 
-// 필수 생성자 2개
 public class MonthItemView extends RelativeLayout{
 
     TextView textView;
@@ -22,11 +22,6 @@ public class MonthItemView extends RelativeLayout{
 
     public MonthItemView(Context context) {
         super(context);
-        init(context);
-    }
-
-    public MonthItemView(Context context, AttributeSet attrs) {
-        super(context, attrs);
         init(context);
     }
 

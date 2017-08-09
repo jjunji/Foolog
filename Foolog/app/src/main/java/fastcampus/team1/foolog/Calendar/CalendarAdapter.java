@@ -1,5 +1,6 @@
 package fastcampus.team1.foolog.Calendar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.icu.util.Calendar;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +29,7 @@ public class CalendarAdapter extends BaseAdapter{
     int curYear; // 현재 년도
     int curMonth; // 현재 월
     Context context;
+    //Context root;
 
     public CalendarAdapter(Context context) {
 
@@ -148,12 +151,14 @@ public class CalendarAdapter extends BaseAdapter{
         MonthItemView view = new MonthItemView(context);
 
         view.setDay(dayList.get(position), position);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("View","position================="+ position);
-            }
-        });
+        //
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.e("View","position================="+ position);
+//                Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         return view;
     }

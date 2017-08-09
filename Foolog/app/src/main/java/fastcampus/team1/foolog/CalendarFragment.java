@@ -1,6 +1,7 @@
 package fastcampus.team1.foolog;
 
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,9 +10,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 
@@ -27,11 +30,19 @@ public class CalendarFragment extends Fragment {
     private CalendarAdapter adapter;
     View view;
     Typeface font;
+    Context context;
 
     public CalendarFragment() {
         // Required empty public constructor
     }
+    public static CalendarFragment newInstance(Context mContext) {
+        Bundle args = new Bundle();
 
+        CalendarFragment fragment = new CalendarFragment();
+        fragment.context = mContext;
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,10 +57,19 @@ public class CalendarFragment extends Fragment {
         txtMonth = (TextView) view.findViewById(R.id.txtMonth);
         monthView = (GridView) view.findViewById(R.id.monthView);
 
-        adapter = new CalendarAdapter(view.getContext());
+        adapter = new CalendarAdapter(context);
         monthView.setAdapter(adapter);
         adapter.setNowMonth();
         setTxtMonth();
+
+        monthView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String position = String.valueOf(i);
+                Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         Button btnPrevious = (Button) view.findViewById(R.id.btnPrevious);
         // 이전 월을 설정하고 그대로 표시됨.
