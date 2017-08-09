@@ -2,6 +2,7 @@ package fastcampus.team1.foolog.Calendar;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import fastcampus.team1.foolog.R;
 public class MonthItemView extends RelativeLayout{
 
     TextView textView;
+    Typeface font;
 
     public MonthItemView(Context context) {
         super(context);
@@ -34,6 +36,7 @@ public class MonthItemView extends RelativeLayout{
         inflater.inflate(R.layout.month_item, this, true);
 
         textView = (TextView) findViewById(R.id.textView);
+        font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
     }
 
     /*
@@ -51,6 +54,7 @@ public class MonthItemView extends RelativeLayout{
         }
 
         textView.setText(day);
+        textView.setTypeface(font);
     }
 }
 

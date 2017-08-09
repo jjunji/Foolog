@@ -291,7 +291,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/api/")
+                .baseUrl("http://api.foolog.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
