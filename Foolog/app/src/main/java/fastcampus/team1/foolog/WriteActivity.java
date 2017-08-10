@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,7 +27,9 @@ import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 
+import fastcampus.team1.foolog.Map.GeoDegree;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -71,6 +74,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private ImageView tagimgBad;
     private EditText editTitle;
     private EditText editMemo;
+
+    float [] latlng = new float[2];
+    public float latitude;
+    public float longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +185,23 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 Glide.with(getBaseContext())
                         .load(new File(imagePath))
                         .into(WriteImage);
+
+                try {
+                    ExifInterface exif = new ExifInterface(imagePath);
+                    GeoDegree geoDegree = new GeoDegree(exif);
+                    latitude = geoDegree.getLatitude();
+                    longitude = geoDegree.getLongitude();
+                    Log.e("WriteActivity","latitude==="+latitude);
+                    Log.e("WriteActivity","longitude==="+longitude);
+
+                    Log.e("WriteActivity","DATETIME==="+exif.getAttribute(ExifInterface.TAG_DATETIME));
+                    Log.e("WriteActivity","Longtitude REF==="+exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
+                    Log.e("WriteActivity","Longtitude ==="+exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                    Log.e("WriteActivity","Latitude REF==="+exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
+                    Log.e("WriteActivity","Latitude ==="+exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 cursor.close();
             } else {
                 Toast.makeText(getBaseContext(), "이미지를 로드할수 없습니다", Toast.LENGTH_SHORT).show();
@@ -185,6 +209,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         }
     }
+
+
+
+
 
     /**
      * RadioGroup 에서 라디오 버튼 선택시 text값이 변하게 해주는 리스너 함수
@@ -341,6 +369,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         RequestBody tags = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString() + "," + txtTaste.getText().toString());
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), editTitle.getText().toString());
         RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), editMemo.getText().toString());
+//        RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),txtAdress.getText().toString());
 
         Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo);
         call.enqueue(new Callback<WriteListResult>() {

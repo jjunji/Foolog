@@ -40,8 +40,8 @@ public interface iService {
                                       @Part("tags") RequestBody tags,
                                       @Part("title") RequestBody title,
                                       @Part("memo") RequestBody memo
-//                                      @Part MultipartBody.Part longitude,
-//                                      @Part MultipartBody.Part latitude,
+//                                      @Part ("latitude")RequestBody latitude
+//                                      @Part ("longitude")RequestBody longitude
 //                                      @Part MultipartBody.Part date,
                                         );
 
