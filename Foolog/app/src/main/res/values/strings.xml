@@ -8,10 +8,12 @@
     <string name="action_settings">Settings</string>
 
 
-    <string name="write_locate">위치를 추가해주세요</string>
+    <string name="write_locate">사진 등록시 자동으로 위치가 추가됩니다.</string>
     <string name="select_food">음식의 종류를 고르세요</string>
     <string name="select_taste">음식의 맛을 고르세요</string>
     <string name="write_text">내용을 입력해주세요</string>
+    <string name="write_marker_title">마커의 제목을 입력하세요.(15자내외)</string>
+    <string name="write_marker_snippet">마커의 내용을 간단하게 입력하세요.(15자내외)</string>
 
 
     <!--todo 임시로 string을 부여했고 다듬으려면 CustomView를 통해서 태그를 만들어 놔야 한다. -->
