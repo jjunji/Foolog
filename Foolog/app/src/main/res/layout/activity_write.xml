@@ -82,14 +82,14 @@
                 app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
             <TextView
-                android:id="@+id/txtMap"
+                android:id="@+id/txtAdress"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:gravity="center"
                 android:hint="@string/write_locate"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -97,7 +97,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <View
                 android:id="@+id/view4"
@@ -105,6 +105,22 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"
                 android:background="#BDBDBD" />
+
+            <EditText
+                android:id="@+id/editTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="@string/write_marker_title"
+                android:maxLength="15"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/editMemo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="@string/write_marker_snippet"
+                android:maxLength="15"
+                android:singleLine="true" />
 
         </LinearLayout>
 
@@ -294,6 +310,8 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"
                 android:background="#BDBDBD" />
+
+
 
         </LinearLayout>
 

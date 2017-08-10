@@ -1,13 +1,19 @@
 package fastcampus.team1.foolog.model;
 
 /**
- * Created by SeungHoShin on 2017. 8. 3..
+ * Created by jhjun on 2017-08-10.
  */
 
-public class WriteListResult {
+public class DayList {
 
     public int pk;
     public UserInfo author;
+
+    public String text;
+    public LocationInfo location;
+
+    public String date;
+    public String photo; // String 으로 주소로 받는다
 
     public class UserInfo{
         public int pk;
@@ -16,9 +22,6 @@ public class WriteListResult {
         public String profile_img;
     }
 
-    public String text;
-    public LocationInfo location;
-
     public class LocationInfo{
         public String title;
         public String memo;
@@ -26,7 +29,6 @@ public class WriteListResult {
         public Float latitude;
     }
 
-    // todo 태그 부분 체크
     public Tag[] tags;
 
     public class Tag{
@@ -34,7 +36,4 @@ public class WriteListResult {
         String type;
         String color;
     }
-    // todo date 타입이 맞는지 , photo타입은 어떻게 해야하는지
-    public String date;
-    public String photo; // String 으로 주소로 받는다
 }
