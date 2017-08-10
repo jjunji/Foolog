@@ -89,7 +89,7 @@
                 android:clickable="true"
                 android:gravity="center"
                 android:hint="@string/write_locate"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 

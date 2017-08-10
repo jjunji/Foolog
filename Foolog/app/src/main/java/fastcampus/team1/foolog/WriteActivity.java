@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import com.bumptech.glide.Glide;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import fastcampus.team1.foolog.Map.GeoDegree;
 import fastcampus.team1.foolog.model.WriteListResult;
@@ -81,6 +84,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     // 위도와 경도값을 셋팅해주는 변수
     String set_latitude;
     String set_longitude;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,16 +163,13 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(Intent.createChooser(intent, "앱을 선택하세요"), 100);
                 break;
-//            case R.id.txtAdress:
-//                intent = new Intent(this, MapsActivity.class);
-//                startActivity(intent);
-//                break;
         }
     }
 
     /**
      * startActivityForResult 를 닫아주는 함수이다.
      * Glide 사용
+     * EXIF 값 추출해서 위도, 경도값 셋팅
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -189,6 +192,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                         .into(WriteImage);
 
                 try {
+                    // todo 만약의 사진의 위치정보 값이 없으면 자기 현재의 위치 or 마지막 위치의 정보값을 저장하게 만든다
                     ExifInterface exif = new ExifInterface(imagePath);
                     GeoDegree geoDegree = new GeoDegree(exif);
                     latitude = geoDegree.getLatitude();
@@ -205,6 +209,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                setReverseGeocoder();
                 cursor.close();
             } else {
                 Toast.makeText(getBaseContext(), "이미지를 로드할수 없습니다", Toast.LENGTH_SHORT).show();
@@ -213,7 +218,36 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /**
+     * Reverse Geocoding
+     * 위도와 경도의 값을 이용해 주소값을 추출한다.
+     */
+    private void setReverseGeocoder() {
+        final Geocoder geocoder = new Geocoder(this);
+        List<Address> list = null;
 
+        try {
+            list = geocoder.getFromLocation(latitude,longitude,1);
+            Log.e("WriteActivity","geocoder list1==="+list);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("WriteActivity","GeoCoder 입출력 오류 - 서버에서 주소변환시 에러발생===");
+        }
+        Log.e("WriteActivity","geocoder list2==="+list);
+        if (list != null){
+            Log.e("WriteActivity","geocoder list3==="+list);
+            if (list.size()==0){
+                txtAdress.setText("해당되는 주소가 없습니다.(마커는 찍힙니다)");
+            }else {
+                txtAdress.setText(list.get(0).getAddressLine(0).toString());
+                Log.e("WriteActivity","list.get(0).getAddressLine(0).toString()=="+list.get(0).getAddressLine(0).toString());
+            }
+        }
+    }
+
+    /**
+     * 추출한 위도 경도 값을 서버로 통신을 하기 위해 String값으로 변환해주는 함수
+     */
     public void setLocation(){
         set_latitude = ""+latitude;
         set_longitude = ""+longitude;
@@ -319,7 +353,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("글작성 중입니다 잠시만 기달려주세요...");
+        progressDialog.setMessage("글작성 중입니다 잠시만 기다려주세요...");
         progressDialog.show();
 
         // okhttp log interceptor 사용해서 자세한 로그값을 확인한다.
@@ -329,7 +363,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         // 레트로핏 정의
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/")
+                .baseUrl("http://api.foolog.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

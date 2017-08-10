@@ -6,6 +6,10 @@ import android.media.ExifInterface;
  * Created by SeungHoShin on 2017. 8. 10..
  */
 
+/**
+ * TAG_GPS_LATITUDE, TAG_GPS_LATITUDE_REF, TAG_GPS_LONGITUDE, TAG_GPS_LONGITUDE_REF 값들이 우리가 원하는
+ * 위도 경도값으로 나오지 않아서 위도 경도로 변환해서 보여주는 클래스이다.
+ */
 public class GeoDegree {
 
 
@@ -38,7 +42,9 @@ public class GeoDegree {
         }
     }
 
-
+    /**
+     * 위도 경도의 값으로 변환해주는 메소드
+     */
     public Float convertToDegree(String stringDMS) {
         Float result = null;
         String[] DMS = stringDMS.split(",", 3);
