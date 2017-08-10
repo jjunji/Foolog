@@ -75,10 +75,12 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     private EditText editTitle;
     private EditText editMemo;
 
-    float [] latlng = new float[2];
+    // EXIF에서 위도와 경도값을 받아오는 변수
     public float latitude;
     public float longitude;
-
+    // 위도와 경도값을 셋팅해주는 변수
+    String set_latitude;
+    String set_longitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +193,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                     GeoDegree geoDegree = new GeoDegree(exif);
                     latitude = geoDegree.getLatitude();
                     longitude = geoDegree.getLongitude();
+                    setLocation();
                     Log.e("WriteActivity","latitude==="+latitude);
                     Log.e("WriteActivity","longitude==="+longitude);
 
@@ -211,7 +214,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
+    public void setLocation(){
+        set_latitude = ""+latitude;
+        set_longitude = ""+longitude;
+    }
 
 
     /**
@@ -364,14 +370,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
 //        MultipartBody.Part text = MultipartBody.Part.createFormData("text", editContent.getText().toString());
 //        MultipartBody.Part tags = MultipartBody.Part.createFormData("tags",txtFood.getText().toString()+","+txtTaste.getText().toString());
-
         RequestBody text = RequestBody.create(MediaType.parse("text/plain"), editContent.getText().toString());
         RequestBody tags = RequestBody.create(MediaType.parse("text/plain"), txtFood.getText().toString() + "," + txtTaste.getText().toString());
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), editTitle.getText().toString());
         RequestBody memo = RequestBody.create(MediaType.parse("text/plain"), editMemo.getText().toString());
-//        RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),txtAdress.getText().toString());
+        RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"), set_latitude);
+        RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"), set_longitude);
 
-        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo);
+        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo, latitude,longitude);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
