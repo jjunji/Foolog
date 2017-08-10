@@ -1,8 +1,5 @@
 package fastcampus.team1.foolog.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 /**
  * Created by SeungHoShin on 2017. 8. 3..
  */
@@ -23,6 +20,7 @@ public class WriteListResult {
     public LocationInfo location;
 
     public class LocationInfo{
+        public String title;
         public String memo;
         public Float longitude;
         public Float latitude;
@@ -39,5 +37,4 @@ public class WriteListResult {
     // todo date 타입이 맞는지 , photo타입은 어떻게 해야하는지
     public String date;
     public String photo; // String 으로 주소로 받는다
-
 }
