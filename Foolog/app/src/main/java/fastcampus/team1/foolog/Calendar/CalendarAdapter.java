@@ -24,6 +24,7 @@ public class CalendarAdapter extends BaseAdapter{
 
     Calendar calendar;
     ArrayList<String> dayList = new ArrayList<String>();
+    ArrayList<String> dateList = new ArrayList<>(); // 포지션 값에 매칭되는 날짜를 저장하는 list(20170810)
 
     int lastDay; // 마지막 날
     int curYear; // 현재 년도
@@ -84,6 +85,8 @@ public class CalendarAdapter extends BaseAdapter{
     public void resetDayNumbers2(){
 
         dayList.clear();
+        dateList.clear();
+
         dayList.add("일");
         dayList.add("월");
         dayList.add("화");
@@ -92,16 +95,31 @@ public class CalendarAdapter extends BaseAdapter{
         dayList.add("금");
         dayList.add("토");
 
+        for(int i = 0; i<7; i++){
+            dateList.add("");
+        }
+
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 위에서 1일로 셋팅했으므로 1일이 무슨 요일인지 확인 -> 3(화)
         Log.i("Main","DAY_OF_WEEK==============="+ dayOfWeek);
 
         for (int i = 1; i < dayOfWeek; i++) {
             dayList.add("");
+            dateList.add("");
         }
 
         for (int i = 1; i <= lastDay; i++) {
             dayList.add("" + (i));
+
+            if( i<=9 ){
+                dateList.add(curYear +"0"+ (curMonth+1) +"0"+ (i));
+            }else{
+                dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
+            }
         }
+    }
+
+    public String getDateList(int position){
+        return dateList.get(position);
     }
 
     // 각 월 마다의 마지막 날 반환
