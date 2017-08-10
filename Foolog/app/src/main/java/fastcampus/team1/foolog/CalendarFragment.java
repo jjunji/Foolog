@@ -1,7 +1,9 @@
 package fastcampus.team1.foolog;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
+import fastcampus.team1.foolog.Dialog.CustomDialog;
 
 
 /**
@@ -31,10 +34,13 @@ public class CalendarFragment extends Fragment {
     View view;
     Typeface font;
     Context context;
+    CustomDialog customDialog;
 
     public CalendarFragment() {
         // Required empty public constructor
     }
+
+    //// TODO: 2017-08-10
     public static CalendarFragment newInstance(Context mContext) {
         Bundle args = new Bundle();
 
@@ -48,6 +54,7 @@ public class CalendarFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         initView();
+
         return view;
     }
 
@@ -68,6 +75,8 @@ public class CalendarFragment extends Fragment {
                 //String position = String.valueOf(i);
                 Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
                 Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
+                customDialog = new CustomDialog(context, adapter.getDateList(position));
+                customDialog.show();
             }
         });
 
@@ -100,5 +109,6 @@ public class CalendarFragment extends Fragment {
         txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
         txtMonth.setTypeface(font);
     }
+
 
 }

@@ -281,7 +281,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("글작성 중입니다 잠시만 기달려주세요...");
+        progressDialog.setMessage("글작성 중입니다 잠시만 기다려주세요...");
         progressDialog.show();
 
         // okhttp log interceptor 사용

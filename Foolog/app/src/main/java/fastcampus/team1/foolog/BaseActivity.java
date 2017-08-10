@@ -1,6 +1,7 @@
 package fastcampus.team1.foolog;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
