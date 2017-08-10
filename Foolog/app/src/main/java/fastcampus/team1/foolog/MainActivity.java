@@ -1,6 +1,7 @@
 package fastcampus.team1.foolog;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
     Toolbar toolbar;
-
+    Context mContext = this;
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +81,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void setFragment(){
         arr = new Fragment[2];
-        arr[0] = new CalendarFragment();
+        arr[0] = CalendarFragment.newInstance(mContext);
         arr[1] = new ListFragment();
     }
 

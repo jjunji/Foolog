@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void setNetwork(){
         // 레트로핏 객체 정의
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://foolog.jos-project.xyz/")
+                .baseUrl("http://api.foolog.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         // 실제 서비스 인터페이스 생성.
