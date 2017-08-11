@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 
 import fastcampus.team1.foolog.Map.GeoDegree;
+import fastcampus.team1.foolog.Map.GpsInfo;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -85,6 +86,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     String set_latitude;
     String set_longitude;
 
+    private GpsInfo gps;
 
 
     @Override
@@ -95,6 +97,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         initView();
         setListener();
         setRadioGroup();
+
     }
 
     /**
@@ -195,17 +198,31 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                     // todo 만약의 사진의 위치정보 값이 없으면 자기 현재의 위치 or 마지막 위치의 정보값을 저장하게 만든다
                     ExifInterface exif = new ExifInterface(imagePath);
                     GeoDegree geoDegree = new GeoDegree(exif);
-                    latitude = geoDegree.getLatitude();
-                    longitude = geoDegree.getLongitude();
+                    if (geoDegree.getLatitude() == null) {
+                        gps = new GpsInfo(WriteActivity.this);
+                        //GPS 사용유무 가져오기
+                        if (gps.isGetLocation()) {
+                            latitude = (float) gps.getLatitude();
+                            longitude = (float) gps.getLongitude();
+                            Toast.makeText(this,"사진의 위치정보값이 없어 현재위치를 불러옵니다.",Toast.LENGTH_LONG).show();
+                            Log.e("WriteActivity", "GPS이용한 위도추출==" + latitude + "경도추출===" + longitude);
+                        } else {
+                            gps.showSettingsAlert();
+                        }
+                    } else {
+                        latitude = geoDegree.getLatitude();
+                        longitude = geoDegree.getLongitude();
+                    }
                     setLocation();
-                    Log.e("WriteActivity","latitude==="+latitude);
-                    Log.e("WriteActivity","longitude==="+longitude);
+                    //gps.stopUsingGPS();
+                    Log.e("WriteActivity", "latitude===" + latitude);
+                    Log.e("WriteActivity", "longitude===" + longitude);
 
-                    Log.e("WriteActivity","DATETIME==="+exif.getAttribute(ExifInterface.TAG_DATETIME));
-                    Log.e("WriteActivity","Longtitude REF==="+exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
-                    Log.e("WriteActivity","Longtitude ==="+exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-                    Log.e("WriteActivity","Latitude REF==="+exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
-                    Log.e("WriteActivity","Latitude ==="+exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                    Log.e("WriteActivity", "DATETIME===" + exif.getAttribute(ExifInterface.TAG_DATETIME));
+                    Log.e("WriteActivity", "Longtitude REF===" + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
+                    Log.e("WriteActivity", "Longtitude ===" + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                    Log.e("WriteActivity", "Latitude REF===" + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
+                    Log.e("WriteActivity", "Latitude ===" + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -227,20 +244,23 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         List<Address> list = null;
 
         try {
-            list = geocoder.getFromLocation(latitude,longitude,1);
-            Log.e("WriteActivity","geocoder list1==="+list);
+            list = geocoder.getFromLocation(latitude, longitude, 1);
+            Log.e("WriteActivity", "geocoder list1===" + list);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("WriteActivity","GeoCoder 입출력 오류 - 서버에서 주소변환시 에러발생===");
+            Log.e("WriteActivity", "GeoCoder 입출력 오류 - 서버에서 주소변환시 에러발생===");
         }
-        Log.e("WriteActivity","geocoder list2==="+list);
-        if (list != null){
-            Log.e("WriteActivity","geocoder list3==="+list);
-            if (list.size()==0){
-                txtAdress.setText("해당되는 주소가 없습니다.(마커는 찍힙니다)");
-            }else {
+        Log.e("WriteActivity", "geocoder list2===" + list);
+        if (list != null) {
+            Log.e("WriteActivity", "geocoder list3===" + list);
+            if (list.size() == 0) {
+                if (gps.getLatitude()==0){
+                    txtAdress.setText("GPS를 활성화해 위치정보를 받아오세요. \n GPS를 키신 경우 사진을 다시 선택해주세요.");
+                    Toast.makeText(this,"만약 위치정보를 등록을 안하시면 \n 마커의 등록이 안됩니다.",Toast.LENGTH_LONG).show();
+                }
+            } else {
                 txtAdress.setText(list.get(0).getAddressLine(0).toString());
-                Log.e("WriteActivity","list.get(0).getAddressLine(0).toString()=="+list.get(0).getAddressLine(0).toString());
+                Log.e("WriteActivity", "list.get(0).getAddressLine(0).toString()==" + list.get(0).getAddressLine(0).toString());
             }
         }
     }
@@ -248,9 +268,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     /**
      * 추출한 위도 경도 값을 서버로 통신을 하기 위해 String값으로 변환해주는 함수
      */
-    public void setLocation(){
-        set_latitude = ""+latitude;
-        set_longitude = ""+longitude;
+    public void setLocation() {
+        set_latitude = "" + latitude;
+        set_longitude = "" + longitude;
     }
 
 
@@ -411,7 +431,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"), set_latitude);
         RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"), set_longitude);
 
-        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo, latitude,longitude);
+        Call<WriteListResult> call = service.uploadImage(send_token, photo, text, tags, title, memo, latitude, longitude);
         call.enqueue(new Callback<WriteListResult>() {
             @Override
             public void onResponse(Call<WriteListResult> call, Response<WriteListResult> response) {
