@@ -33,8 +33,7 @@ public class CustomDialog extends Dialog {
     TextView txtFood, txtEval; // 태그 표현 위젯
     ImageView imgFood;  // 다이얼로그 위젯 - 이미지뷰
     String date, memo;  // 서버로 부터 받은 날짜, 메모
-    // 받는 타입을 정의하는 거잖아 - 객체 2개로 날아오고 - 근데 상위 타입이 배열이니까 배열로 선언하면 되지 않을까
-    DayList.Tag[] tag;
+    DayList.Tag[] tag; // 태그 값 -> json 배열
     String imageUrl;
     Context context;
     String send_token;  // 통신에 필요한 헤더 값 (토큰)
@@ -154,7 +153,8 @@ public class CustomDialog extends Dialog {
 }
 
 /*
- setNetwork 후
+ setNetwork 후 init으로 값이 안넘어오는 이유
+ 다이얼로그 내린 후 다시 누르면 넘어가 있음.
  */
 
 // TODO: 2017-08-11  아래와 같이 할 경우 왜 안되는지 & Glide.with(context) 의미
@@ -168,4 +168,5 @@ public class CustomDialog extends Dialog {
                         imgFood.setImageBitmap(bm);
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }*/
+                    }
+*/

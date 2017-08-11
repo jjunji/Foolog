@@ -169,7 +169,14 @@ public class CalendarAdapter extends BaseAdapter{
         MonthItemView view = new MonthItemView(context);
 
         view.setDay(dayList.get(position), position);
-        //
+        view.setToday(dayList.get(position));
+
+        return view;
+    }
+}
+
+// TODO: 2017-08-1
+//
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -177,7 +184,3 @@ public class CalendarAdapter extends BaseAdapter{
 //                Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
 //            }
 //        });
-
-        return view;
-    }
-}
