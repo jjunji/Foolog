@@ -31,16 +31,16 @@ import android.content.SharedPreferences;
 
 public class CustomDialog extends Dialog {
 
-    TextView txtDate, txtTag, txtMemo, txtPlace;
-    String date;
-    String[] arr = new String[2];
-    String memo;
-    String place;
-    ImageView imgFood;
+    TextView txtDate, txtTag, txtMemo, txtPlace;  // 다이얼로그의 각 위젯
+    String date;  // 서버로 부터 받은 날짜
+    //String[] arr = new String[2];
+    String memo; // 서버로 부터 받은 text
+    //String place;
+    ImageView imgFood;  // 다이얼로그 위젯 - 이미지뷰
     DayList dayList;
     Context context;
-    String send_token;
-    String day;
+    String send_token;  // 통신에 필요한 헤더 값 (토큰)
+    String day;  // 날짜 클릭시 넘어온 해당 날짜의 정보 YYYYMMDD -> Get Day list 에 전송하는 값
 
     public CustomDialog(@NonNull Context context, String day) {
         super(context);
@@ -62,8 +62,8 @@ public class CustomDialog extends Dialog {
         init();
         setNetwork();
 
-        txtDate.setText(day);
-        txtMemo.setText(memo);
+        //txtDate.setText("ㅁㄴㅇㄹ");
+        //txtMemo.setText(memo);
         //txtTag.setText(arr[0]);
     }
 
@@ -104,9 +104,11 @@ public class CustomDialog extends Dialog {
                 if(response.isSuccessful()){
                     DayList[] dayList = response.body();
                     date = dayList[0].date;
+                    txtDate.setText(date);
                     Log.e("CustomDialog","date =============="+ date);
                     //arr[0] = dayList.tags[0].toString();
                     memo = dayList[0].text;
+                    txtMemo.setText(memo);
                     Log.e("CustomDialog","memo =============="+ memo);
                     // 이미지
                 }else{
@@ -124,3 +126,7 @@ public class CustomDialog extends Dialog {
 
 
 }
+
+/*
+ setNetwork 후
+ */
