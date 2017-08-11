@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 import fastcampus.team1.foolog.R;
 
 /**
@@ -50,6 +52,13 @@ public class MonthItemView extends RelativeLayout{
 
         textView.setText(day);
         textView.setTypeface(font);
+    }
+
+    public void setToday(String day){
+        if(day.equals(Calendar.DAY_OF_MONTH)){
+            //textView.setTextColor(Color.parseColor("#007bbb"));
+            textView.setBackgroundColor(Color.YELLOW);
+        }
     }
 }
 

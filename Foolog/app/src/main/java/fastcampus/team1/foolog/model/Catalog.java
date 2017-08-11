@@ -1,16 +1,16 @@
 package fastcampus.team1.foolog.model;
 
 /**
- * Created by jhjun on 2017-08-10.
+ * Created by jhjun on 2017-08-12.
  */
 
-public class DayList {
+public class Catalog {
 
     public int pk;
-    public UserInfo author;
+    public DayList.UserInfo author;
 
     public String text;
-    public LocationInfo location;
+    public DayList.LocationInfo location;
 
     public String date;
     public String photo; // String 으로 주소로 받는다
@@ -29,7 +29,7 @@ public class DayList {
         public Float latitude;
     }
 
-    public Tag[] tags;
+    public DayList.Tag[] tags;
 
     public class Tag{
         public String text;
