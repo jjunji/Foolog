@@ -205,7 +205,6 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                             latitude = (float) gps.getLatitude();
                             longitude = (float) gps.getLongitude();
                             Log.e("WriteActivity", "GPS이용한 위도추출==" + latitude + "경도추출===" + longitude);
-                            Toast.makeText(this,"당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,Toast.LENGTH_SHORT).show();
                         } else {
                             gps.showSettingsAlert();
                         }
@@ -254,7 +253,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         if (list != null) {
             Log.e("WriteActivity", "geocoder list3===" + list);
             if (list.size() == 0) {
-                txtAdress.setText("사진의 위치정보 값이 없어 현재위치 또는 마지막위치가 저장됩니다.");
+                if (gps.getLatitude()==0){
+                    txtAdress.setText("GPS를 활성화해 위치정보를 받아오세요. \n GPS를 키신 경우 사진을 다시 선택해주세요.");
+                    Toast.makeText(this,"만약 위치정보를 등록을 안하시면 \n 마커의 등록이 안됩니다.",Toast.LENGTH_LONG).show();
+                }
             } else {
                 txtAdress.setText(list.get(0).getAddressLine(0).toString());
                 Log.e("WriteActivity", "list.get(0).getAddressLine(0).toString()==" + list.get(0).getAddressLine(0).toString());
