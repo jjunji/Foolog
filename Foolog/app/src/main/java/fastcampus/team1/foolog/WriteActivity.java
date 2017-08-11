@@ -204,6 +204,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                         if (gps.isGetLocation()) {
                             latitude = (float) gps.getLatitude();
                             longitude = (float) gps.getLongitude();
+                            Toast.makeText(this,"사진의 위치정보값이 없어 현재위치를 불러옵니다.",Toast.LENGTH_LONG).show();
                             Log.e("WriteActivity", "GPS이용한 위도추출==" + latitude + "경도추출===" + longitude);
                         } else {
                             gps.showSettingsAlert();
