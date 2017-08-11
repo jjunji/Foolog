@@ -73,8 +73,8 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 //String position = String.valueOf(i);
-                Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
                 customDialog = new CustomDialog(context, adapter.getDateList(position));
                 customDialog.show();
             }

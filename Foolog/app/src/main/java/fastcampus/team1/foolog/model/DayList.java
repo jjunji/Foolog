@@ -32,8 +32,8 @@ public class DayList {
     public Tag[] tags;
 
     public class Tag{
-        String text;
-        String type;
-        String color;
+        public String text;
+        public String type;
+        public String color;
     }
 }
