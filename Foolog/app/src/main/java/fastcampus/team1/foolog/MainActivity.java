@@ -17,15 +17,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-
-import android.util.Log;
 import android.view.Menu;
-
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import fastcampus.team1.foolog.Map.MapsActivity;
 import fastcampus.team1.foolog.util.PermissionControl;
 import me.huseyinozer.TooltipIndicator;
 
@@ -144,7 +142,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

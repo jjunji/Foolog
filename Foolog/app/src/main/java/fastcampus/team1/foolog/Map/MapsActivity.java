@@ -5,8 +5,6 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -21,30 +19,23 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.util.PermissionControl;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
+        GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap mGoogleMap = null;
@@ -84,7 +75,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
 
-
         if(mGoogleApiClient != null)
             mGoogleApiClient.connect();
 
@@ -117,9 +107,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause() {
 
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,  this);
-
             mGoogleApiClient.disconnect();
         }
 
@@ -137,8 +124,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mGoogleApiClient.unregisterConnectionFailedListener(this);
 
             if (mGoogleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi
-                        .removeLocationUpdates(mGoogleApiClient, this);
                 mGoogleApiClient.disconnect();
             }
 
@@ -154,14 +139,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         mGoogleMap = map;
-
-        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에 지도의 초기위치를 서울로 이동
-        setCurrentLocation(null, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS 활성 요부 확인하세요");
+        // 처음 맵 실행시 서울의 화면을 Default값으로 보여준다
+        LatLng SEOUL = new LatLng(37.56,126.97);
+        map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
 
         mGoogleMap.getUiSettings().setCompassEnabled(true);
         //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //API 23 이상이면 런타임 퍼미션 처리 필요
@@ -176,10 +160,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             } else {
 
-                if (mGoogleApiClient == null) {
-                    buildGoogleApiClient();
-                }
-
                 if (ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
@@ -189,14 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         } else {
-
-            if (mGoogleApiClient == null) {
-                buildGoogleApiClient();
-            }
-
-
             mGoogleMap.setMyLocationEnabled(true);
-
         }
 
 
@@ -206,35 +179,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mGoogleMap.addMarker(new MarkerOptions().position(temp).title("Marker in Sydney"));
     }
 
-    /**
-     * Google Location Implement 함수
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-
-        Log.d( TAG, "onLocationChanged");
-        String markerTitle = getCurrentAddress(location);
-        String markerSnippet = "위도:"+String.valueOf(location.getLatitude()) +
-                " 경도:"+String.valueOf(location.getLongitude());
-
-        //현재 위치에 마커 생성
-        setCurrentLocation(location, markerTitle, markerSnippet);
-
-    }
-
-    /**
-     * 동기화 함수
-     */
-    protected synchronized void buildGoogleApiClient() {
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-
-    }
 
 
     /**
@@ -259,16 +203,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
 
-                LocationServices.FusedLocationApi
-                        .requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-
             }
         }
         else{
-
-            Log.d(TAG,"onConnected : call FusedLocationApi");
-            LocationServices.FusedLocationApi
-                    .requestLocationUpdates(mGoogleApiClient, locationRequest, this);
 
             mGoogleMap.getUiSettings().setCompassEnabled(true);
             //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
@@ -295,46 +232,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
         Location location = null;
         location.setLatitude(DEFAULT_LOCATION.latitude);
         location.setLongitude(DEFAULT_LOCATION.longitude);
-
-        setCurrentLocation(location, "위치정보 가져올 수 없음",
-                "위치 퍼미션과 GPS 활성 요부 확인하세요");
-
-    }
-
-    public String getCurrentAddress(Location location){
-
-        //지오코더... GPS를 주소로 변환
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        List<Address> addresses;
-
-        try {
-            addresses = geocoder.getFromLocation(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    1);
-        } catch (IOException ioException) {
-            //네트워크 문제
-            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
-            return "지오코더 서비스 사용불가";
-        } catch (IllegalArgumentException illegalArgumentException) {
-            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-            return "잘못된 GPS 좌표";
-
-        }
-
-        if (addresses == null || addresses.size() == 0) {
-            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
-            return "주소 미발견";
-
-        } else {
-            Address address = addresses.get(0);
-            return address.getAddressLine(0).toString();
-        }
 
     }
 
@@ -349,35 +249,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
 
-        if (currentMarker != null) currentMarker.remove();
-
-
         if (location != null) {
             LatLng currentLocation = new LatLng( location.getLatitude(), location.getLongitude());
 
             //마커를 원하는 이미지로 변경해줘야함
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLocation);
-            markerOptions.title(markerTitle);
-            markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
-            markerOptions.icon(BitmapDescriptorFactory
-                    .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            currentMarker = mGoogleMap.addMarker(markerOptions);
-
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            return;
+//            markerOptions.title(markerTitle);
+//            markerOptions.snippet(markerSnippet);
+//            markerOptions.draggable(true);
+//            markerOptions.icon(BitmapDescriptorFactory
+//                    .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//            currentMarker = mGoogleMap.addMarker(markerOptions);
+//
+//            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+//            return;
         }
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(DEFAULT_LOCATION);
-        markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
-        markerOptions.draggable(true);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = mGoogleMap.addMarker(markerOptions);
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(DEFAULT_LOCATION);
+//        markerOptions.title(markerTitle);
+//        markerOptions.snippet(markerSnippet);
+//        markerOptions.draggable(true);
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+//        currentMarker = mGoogleMap.addMarker(markerOptions);
 
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
+//        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
 
     }
 
@@ -403,13 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         else if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
-            if (mGoogleApiClient == null) {
-                buildGoogleApiClient();
-            }
-
             mGoogleMap.setMyLocationEnabled(true);
-
-
         }
     }
 
@@ -425,21 +316,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (permissionAccepted) {
 
-                if (mGoogleApiClient == null) {
-                    buildGoogleApiClient();
-                }
-
                 if (ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
 
                     mGoogleMap.setMyLocationEnabled(true);
                 }
-
-
             }
             else {
-
                 checkPermissions();
             }
         }
@@ -501,8 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         builder.setTitle("위치 서비스 비활성화");
-        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
-                + "위치 설정을 수정하실래요?" );
+        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" + "위치 설정을 수정하실래요?" );
         builder.setCancelable(true);
         builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
             @Override
@@ -535,9 +418,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (checkLocationServicesStatus()) {
                     if (checkLocationServicesStatus()) {
 
-                        if (mGoogleApiClient == null) {
-                            buildGoogleApiClient();
-                        }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (ActivityCompat.checkSelfPermission(this,
                                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -551,11 +431,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         return;
                     }
                 }
-                else{
-                    setCurrentLocation(null, "위치정보 가져올 수 없음",
-                            "위치 퍼미션과 GPS 활성 요부 확인하세요");
-                }
-
                 break;
         }
     }
