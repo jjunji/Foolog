@@ -168,8 +168,8 @@ public class CalendarAdapter extends BaseAdapter{
     public View getView(final int position, View convertView, ViewGroup parent) {
         MonthItemView view = new MonthItemView(context);
 
-        view.setDay(dayList.get(position), position);
-        view.setToday(dayList.get(position));
+        view.setWeek(position); // 주말 표시 메서드
+        view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
 
         return view;
     }

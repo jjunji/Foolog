@@ -5,11 +5,15 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import fastcampus.team1.foolog.R;
 
@@ -40,8 +44,9 @@ public class MonthItemView extends RelativeLayout{
      달력의 각 뷰는 0 부터 시작해 ++ 된다는 것을 확인 -> 일요일에 해당하는 뷰들은 position 0 7 14 21 로 진행.
      position 값을 7로 나누어 나머지가 0일 경우는 일요일을 뜻하므로 조건문으로 판단하여 텍스트를 붉게 표시함.
     */
-    // 달력(그리드 뷰)에 날짜를 설정
-    public void setDay(String day,int position){
+
+    // 달력(그리드 뷰)에 주말 표시
+    public void setWeek(int position){
         if( position % 7 == 0 ){
             textView.setTextColor(Color.RED);
         }else if( position % 7 == 6 ){
@@ -49,16 +54,43 @@ public class MonthItemView extends RelativeLayout{
         } else{
             textView.setTextColor(Color.BLACK);
         }
-
-        textView.setText(day);
-        textView.setTypeface(font);
     }
 
-    public void setToday(String day){
-        if(day.equals(Calendar.DAY_OF_MONTH)){
-            //textView.setTextColor(Color.parseColor("#007bbb"));
-            textView.setBackgroundColor(Color.YELLOW);
+    // 날짜, 오늘 날짜 표시
+    public void setDay(String day, String month){
+        Log.i("setToday", "day==============" + day);
+        Log.i("setToday", "month============" + month);
+
+        Boolean isToday = getDateString(day, month);
+        Log.i("setToday", "flag=============" + isToday);
+        if(isToday == true){
+            textView.setBackgroundColor(getResources().getColor(R.color.colorToday));
+            textView.setText(day);
+            textView.setTypeface(font);
+        }else{
+            textView.setText(day);
+            textView.setTypeface(font);
         }
+    }
+
+    // 오늘의 날짜 판별
+    public boolean getDateString(String day, String month)
+    {
+        Boolean flag;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("M-dd", Locale.KOREA);
+        String date_temp = sdf.format(new Date());
+        String[] date_today = date_temp.split("-");
+        String today_month = date_today[0]; // 8
+        String today_day = date_today[1]; // 13
+
+        if(today_month.equals(month) && today_day.equals(day)){
+            flag = true;
+        }else{
+            flag = false;
+        }
+
+        return flag;
     }
 }
 
