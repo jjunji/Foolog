@@ -1,5 +1,7 @@
 package fastcampus.team1.foolog;
 
+import java.util.List;
+
 import fastcampus.team1.foolog.model.Catalog;
 import fastcampus.team1.foolog.model.DayList;
 import fastcampus.team1.foolog.model.Join;
@@ -44,7 +46,7 @@ public interface iService {
     //@GET("stats/?start={start}&end={end}")
     //Call<TagList[]> createTagList(@Path("start") int start, @Path("end") int end);
     @GET("stats/?")
-    Call<TagList[]> createTagList(
+    Call<List<TagList>> createTagList(
                                 @Header("Authorization") String send_token,
                                 @Query("start") String start,
                                 @Query("end") String end

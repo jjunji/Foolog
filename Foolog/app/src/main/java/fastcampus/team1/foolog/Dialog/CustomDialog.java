@@ -70,7 +70,6 @@ public class CustomDialog extends Dialog {
         SharedPreferences storage = context.getSharedPreferences("storage", Activity.MODE_PRIVATE);
         String shared_token = storage.getString("inputToken", " ");
         send_token = "Token " + shared_token;
-        Log.e("Dialog","Token ====================="+ send_token);
     }
 
     private void setNetwork(){
@@ -88,6 +87,7 @@ public class CustomDialog extends Dialog {
         iService service = retrofit.create(iService.class);
         // 서비스 호출
         Call<DayList[]> call = service.createDayList(day,send_token);
+        Log.e("Dialog","Token ====================="+ send_token);
         //Call call = service.createDayList("day",day);
         call.enqueue(new Callback<DayList[]>() {
             @Override               // Call call..

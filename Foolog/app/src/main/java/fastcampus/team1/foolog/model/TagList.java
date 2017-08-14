@@ -9,13 +9,13 @@ public class TagList {
     public tagInfo count;
 
     public class tagInfo {
-        String 한식;
-        String 중식;
-        String 일식;
-        String 양식;
-        String 기타;
-        String Good;
-        String Soso;
-        String Bad;
+        public String 한식;
+        public String 중식;
+        public String 일식;
+        public String 양식;
+        public String 기타;
+        public String Good;
+        public String Soso;
+        public String Bad;
     }
 }
