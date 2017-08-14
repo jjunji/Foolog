@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.MapsInitializer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -87,6 +88,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     String set_longitude;
 
     private GpsInfo gps;
+//    private MapsActivity maps;
+
+
+
 
 
     @Override
@@ -97,6 +102,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         initView();
         setListener();
         setRadioGroup();
+        MapsInitializer.initialize(this);
 
     }
 
@@ -161,6 +167,8 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
                 uploadFile();
+//                maps = new MapsActivity();
+//                maps.setMarker(latitude, longitude, editTitle.getText().toString(),editMemo.getText().toString(),txtFood.getText().toString());
                 break;
             case R.id.WriteImage:
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

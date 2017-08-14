@@ -1,10 +1,13 @@
 package fastcampus.team1.foolog;
 
+import java.util.List;
+
 import fastcampus.team1.foolog.model.Catalog;
 import fastcampus.team1.foolog.model.DayList;
 import fastcampus.team1.foolog.model.Join;
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
+import fastcampus.team1.foolog.model.Marker;
 import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MultipartBody;
@@ -39,6 +42,9 @@ public interface iService {
 
     @GET("post/day/")
     Call<Catalog[]> createCatalog(@Header("Authorization") String send_token); // 토큰 값만 전송 & api 뒤에 날짜입력
+
+    @GET("post/")
+    Call<List<Marker>> createMarker(@Header("Authorization") String send_token);
 
     // @Part() 안에있는것이 의미하는건 서버에서 안에있는 텍스트로 인식하게끔 만들어준다.(Server Api랑 일치)
     @Multipart
