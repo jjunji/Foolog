@@ -2,6 +2,7 @@ package fastcampus.team1.foolog.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -14,6 +15,17 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 
+import fastcampus.team1.foolog.iService;
+import fastcampus.team1.foolog.model.DayList;
+import fastcampus.team1.foolog.model.TagList;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by jhjun on 2017-08-04.
  */
@@ -23,6 +35,8 @@ import java.util.Date;
 public class CalendarAdapter extends BaseAdapter{
 
     Calendar calendar;
+    TagList[] tagList;
+    ArrayList<TagList> info = new ArrayList<>();
     ArrayList<String> dayList = new ArrayList<String>();
     ArrayList<String> dateList = new ArrayList<>(); // 포지션 값에 매칭되는 날짜를 저장하는 list(20170810)
 
@@ -30,20 +44,23 @@ public class CalendarAdapter extends BaseAdapter{
     int curYear; // 현재 년도
     int curMonth; // 현재 월
     Context context;
-    //Context root;
+    String send_token;
+    String start, end;
 
-    public CalendarAdapter(Context context) {
+    public CalendarAdapter(Context context, String token) {
 
         Date date = new Date();
         calendar = Calendar.getInstance();
         calendar.setTime(date);  // calendar 에 현재 시간 설정.
         this.context = context;
+        this.send_token = token;
     }
 
     public void setNowMonth(){
         calendar.add(Calendar.MONTH, curMonth);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // 실제 아이템 뷰에 넣어서 뷰로 보여줌
+        Log.e("setNowMont","Start & End==========="+ start + end);
     }
 
     public void setPreviousMonth(){
@@ -75,6 +92,7 @@ public class CalendarAdapter extends BaseAdapter{
         curYear = calendar.get(Calendar.YEAR);  // 2017
         curMonth = calendar.get(Calendar.MONTH);  // 7 (0 부터 시작) -> 8월
         lastDay = getLastDay();  // 셋팅 달의 마지막 날이 몇일인지 출력 -> 31
+        //setNetwork(dateList.get(Calendar.DAY_OF_MONTH), dateList.get(dateList.size()));
 
         Log.i("Main","DAY_OF_MONTH==============="+ Calendar.DAY_OF_MONTH);
         Log.i("Main","curYear==============="+ curYear);
@@ -116,6 +134,16 @@ public class CalendarAdapter extends BaseAdapter{
                 dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
             }
         }
+
+        setTagQuery(dayOfWeek);
+    }
+
+    public void setTagQuery(int dayOfWeek){
+        int startNum = dayOfWeek + 6; // 9
+        int endNum = dateList.size()-1; // 리스트 마지막 요소 -> 달의 마지막 날짜
+
+        start = dateList.get(startNum);
+        end = dateList.get(endNum);
     }
 
     public String getDateList(int position){
@@ -170,9 +198,11 @@ public class CalendarAdapter extends BaseAdapter{
 
         view.setWeek(position); // 주말 표시 메서드
         view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
+        //view.setNetwork(send_token, start, end);
 
         return view;
     }
+
 }
 
 // TODO: 2017-08-1
