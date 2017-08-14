@@ -135,7 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mGoogleApiClient.disconnect();
         }
         // 맵의 모든 마커를 지운다
-        mGoogleMap.clear();
         super.onPause();
     }
 
@@ -155,7 +154,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
         // 맵의 모든 마커를 지운다
-        mGoogleMap.clear();
         super.onDestroy();
     }
 
@@ -176,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mGoogleMap.getUiSettings().setCompassEnabled(true);
         //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
 //        if (latitude != null) {
 //            setMarker(latitude, longitude, title, memo, foodtag);

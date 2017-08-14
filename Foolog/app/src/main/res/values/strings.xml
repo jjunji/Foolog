@@ -15,6 +15,13 @@
     <string name="write_marker_title">마커의 제목을 입력하세요.(15자내외)</string>
     <string name="write_marker_snippet">마커의 내용을 간단하게 입력하세요.(15자내외)</string>
 
+    <string name="navi_map">지도 마커 통계보기</string>
+    <string name="navi_graph">그래프 통계보기</string>
+    <string name="navi_circle_graph">원형그래프 통계보기</string>
+    <string name="navi_statistics">통계</string>
+    <string name="navi_etc">기타</string>
+
+
 
     <!--todo 임시로 string을 부여했고 다듬으려면 CustomView를 통해서 태그를 만들어 놔야 한다. -->
     <string name="tag_korea">한식</string>
