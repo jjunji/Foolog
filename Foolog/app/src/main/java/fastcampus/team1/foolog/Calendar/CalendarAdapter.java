@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import fastcampus.team1.foolog.iService;
 import fastcampus.team1.foolog.model.DayList;
@@ -35,8 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CalendarAdapter extends BaseAdapter{
 
     Calendar calendar;
-    TagList[] tagList;
-    ArrayList<TagList> info = new ArrayList<>();
     ArrayList<String> dayList = new ArrayList<String>();
     ArrayList<String> dateList = new ArrayList<>(); // 포지션 값에 매칭되는 날짜를 저장하는 list(20170810)
 
@@ -46,6 +45,7 @@ public class CalendarAdapter extends BaseAdapter{
     Context context;
     String send_token;
     String start, end;
+    List<TagList> tagList = new ArrayList<>();
 
     public CalendarAdapter(Context context, String token) {
 
@@ -146,6 +146,7 @@ public class CalendarAdapter extends BaseAdapter{
         }
 
         setTagQuery(dayOfWeek);
+        setNetwork(send_token, start, end);
     }
 
     public void setTagQuery(int dayOfWeek){
@@ -155,6 +156,54 @@ public class CalendarAdapter extends BaseAdapter{
         start = dateList.get(startNum);
         end = dateList.get(endNum);
     }
+
+    public void Calc(){
+
+    }
+
+    public void setNetwork(String send_token, String start, String end){
+        // okhttp log interceptor 사용
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
+        // 레트로핏 객체 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.foolog.xyz/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        // 실제 서비스 인터페이스 생성.
+        iService service = retrofit.create(iService.class);
+        // 서비스 호출
+        Call<List<TagList>> call = service.createTagList(send_token, start, end);
+        call.enqueue(new Callback<List<TagList>>() {
+            @Override
+            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+                // 전송결과가 정상이면
+                Log.e("Write","in ====== onResponse");
+                if(response.isSuccessful()){
+                    tagList = response.body();  // TODO: 2017-08-14
+
+                    String a = tagList.get(0).date;
+                    String b = tagList.get(1).date;
+                    String c = tagList.get(2).date;
+                    String d = tagList.get(3).count.한식;
+                    String f = tagList.get(12).count.양식;
+                    Log.i("CalendarAdapter","info=============="+d + "&" +f);
+                    Log.i("CalendarAdapter","date=============="+a+"  &  "+b +" & " + c);
+                }else{
+                    int statusCode = response.code();
+                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TagList>> call, Throwable t) {
+                Log.e("MyTag","error==========="+t.getMessage());
+            }
+        });
+    }
+
 
     public String getDateList(int position){
         return dateList.get(position);
