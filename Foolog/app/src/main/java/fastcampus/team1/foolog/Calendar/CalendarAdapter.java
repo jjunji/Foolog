@@ -158,7 +158,8 @@ public class CalendarAdapter extends BaseAdapter{
     }
 
     public void Calc(){
-
+        String kor = tagList.get(14).count.한식;  // 1
+        String chin = tagList.get(0).count.중식;
     }
 
     public void setNetwork(String send_token, String start, String end){
@@ -257,7 +258,7 @@ public class CalendarAdapter extends BaseAdapter{
 
         view.setWeek(position); // 주말 표시 메서드
         view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
-        //view.setNetwork(send_token, start, end);
+
 
         return view;
     }

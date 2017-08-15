@@ -3,8 +3,11 @@ package fastcampus.team1.foolog.Calendar;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,6 +18,9 @@ import java.util.List;
 import java.util.Locale;
 
 import fastcampus.team1.foolog.R;
+import fastcampus.team1.foolog.Tag_Recycler.CustomRecycler;
+import fastcampus.team1.foolog.Tag_Recycler.Data;
+import fastcampus.team1.foolog.Tag_Recycler.Loader;
 import fastcampus.team1.foolog.iService;
 import fastcampus.team1.foolog.model.TagList;
 import okhttp3.OkHttpClient;
@@ -34,11 +40,8 @@ public class MonthItemView extends RelativeLayout{
     TextView textView;
     TextView txtTag;
     Typeface font;
-    //TagList[] tagList;
-    List<TagList> tagList = new ArrayList<>();
-    //ArrayList<TagList> info = new ArrayList<>();
-    TagList.tagInfo info;
-    TagList.tagInfo info2;
+    ImageView imgTag;
+    RecyclerView listView;
 
     public MonthItemView(Context context) {
         super(context);
@@ -51,8 +54,13 @@ public class MonthItemView extends RelativeLayout{
         inflater.inflate(R.layout.month_item, this, true);
 
         textView = (TextView) findViewById(R.id.textView);
-        txtTag = (TextView) findViewById(R.id.txtTag);
         font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
+
+        listView = (RecyclerView) findViewById(R.id.listView);
+        ArrayList<Data> datas = Loader.getData(context);
+        CustomRecycler adapter = new CustomRecycler(datas, this);
+        listView.setAdapter(adapter);
+        listView.setLayoutManager(new GridLayoutManager(context, 2));
     }
 
     /*
@@ -108,54 +116,5 @@ public class MonthItemView extends RelativeLayout{
         return flag;
     }
 
-/*    public void setPostTag(int start, int end){
-
-
-    }*/
-
-   /* public void setNetwork(String send_token, String start, String end){
-        // okhttp log interceptor 사용
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
-        // 레트로핏 객체 정의
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.foolog.xyz/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        // 실제 서비스 인터페이스 생성.
-        iService service = retrofit.create(iService.class);
-        // 서비스 호출
-        Call<List<TagList>> call = service.createTagList(send_token, start, end);
-        call.enqueue(new Callback<List<TagList>>() {
-            @Override
-            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
-                // 전송결과가 정상이면
-                Log.e("Write","in ====== onResponse");
-                if(response.isSuccessful()){
-                    tagList = response.body();  // TODO: 2017-08-14
-                    //String a = tagList[0].date;
-                    //String b = tagList[1].date;
-                    //Log.i("CalendarAdapter","date=============="+a+"  &  "+b);
-                    String a = tagList.get(0).date;
-                    String b = tagList.get(1).date;
-                    String c = tagList.get(2).date;
-                    String d = tagList.get(3).count.한식;
-                    String f = tagList.get(12).count.양식;
-                    Log.i("CalendarAdapter","info=============="+d + "&" +f);
-                    Log.i("CalendarAdapter","date=============="+a+"  &  "+b +" & " + c);
-                }else{
-                    int statusCode = response.code();
-                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<TagList>> call, Throwable t) {
-                Log.e("MyTag","error==========="+t.getMessage());
-            }
-        });
-    }*/
 }
 
