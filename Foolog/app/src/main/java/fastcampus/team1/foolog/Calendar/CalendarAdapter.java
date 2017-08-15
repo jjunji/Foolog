@@ -60,19 +60,21 @@ public class CalendarAdapter extends BaseAdapter{
         calendar.add(Calendar.MONTH, curMonth);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // 실제 아이템 뷰에 넣어서 뷰로 보여줌
-        Log.e("setNowMont","Start & End==========="+ start + end);
+        Log.e("setNowMonth","Start & End==========="+ start + end);
     }
 
     public void setPreviousMonth(){
         calendar.add(Calendar.MONTH, -1); // -1 : 이전 달로 이동
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // 실제 아이템 뷰에 넣어서 뷰로 보여줌
+        Log.e("setPreMonth","Start & End==========="+ start + end);
     }
 
     public void setNextMonth(){
         calendar.add(Calendar.MONTH, +1);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // 실제 아이템 뷰에 넣어서 뷰로 보여줌
+        Log.e("setNextMonth","Start & End==========="+ start + end);
     }
 
     public int getCurrentYear(){
@@ -128,10 +130,18 @@ public class CalendarAdapter extends BaseAdapter{
         for (int i = 1; i <= lastDay; i++) {
             dayList.add("" + (i));
 
-            if( i<=9 ){
-                dateList.add(curYear +"0"+ (curMonth+1) +"0"+ (i));
-            }else{
-                dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
+            if( i<10 ){ // 10일 미만
+                if((curMonth+1) < 10){ // 10월 미만
+                    dateList.add(curYear +"0"+ (curMonth+1) +"0"+ (i));
+                }else{  // 10일 미만 10월 이상
+                    dateList.add(curYear +""+ (curMonth+1) +"0"+ (i));
+                }
+            }else{ // 10일 이상
+                if((curMonth+1) < 10){  // 10월 미만
+                    dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
+                }else{  // 10월 이상
+                    dateList.add(curYear +""+ (curMonth+1) +""+ (i));
+                }
             }
         }
 
