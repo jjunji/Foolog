@@ -40,9 +40,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class CalendarFragment extends Fragment {
 
-    private TextView txtMonth;
-    private GridView monthView;
-    private CalendarAdapter adapter;
+    TextView txtMonth;
+    GridView monthView;
+    CalendarAdapter adapter;
     View view;
     Typeface font;
     Context context;
@@ -51,6 +51,7 @@ public class CalendarFragment extends Fragment {
     SharedPreferences storage;
     String shared_token;
     Button btnPrevious, btnNext;
+    List<TagList> tagList = new ArrayList<>();
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -72,7 +73,6 @@ public class CalendarFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         Log.i("CalendarFragment", "===================CalendarFragment" + "Start");
 
-        Log.e("Dialog", "Token =====================" + send_token);
         initView();
         setAdapter();   // 어답터 연결
         setTxtMonth();  // 달력 상단 월 표시 텍스트
@@ -88,6 +88,9 @@ public class CalendarFragment extends Fragment {
         send_token = "Token " + shared_token;
 
         font = Typeface.createFromAsset(getActivity().getAssets(), "yaFontBold.ttf");
+
+        setNetwork(send_token, "20170801", "20170831");
+
         adapter = new CalendarAdapter(context, send_token);
 
         btnPrevious = (Button) view.findViewById(R.id.btnPrevious);
@@ -98,9 +101,11 @@ public class CalendarFragment extends Fragment {
         monthView = (GridView) view.findViewById(R.id.monthView);
     }
 
+
+
     private void setAdapter() {
-        monthView.setAdapter(adapter);
-        adapter.setNowMonth();
+        monthView.setAdapter(adapter); // 그리드뷰(달력) 와 어댑터 연결 (안하면 뷰가 안보임)
+        adapter.setNowMonth();  // 실행과 동시에 현재 달력 보이게 설정.
     }
 
     // 전 달, 다음 달 이동 버튼
@@ -143,6 +148,47 @@ public class CalendarFragment extends Fragment {
                 //Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
                 customDialog = new CustomDialog(context, adapter.getDateList(position));
                 customDialog.show();
+            }
+        });
+    }
+
+    public void setNetwork(String send_token, String start, String end){
+        // okhttp log interceptor 사용
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
+        // 레트로핏 객체 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.foolog.xyz/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        // 실제 서비스 인터페이스 생성.
+        iService service = retrofit.create(iService.class);
+        // 서비스 호출
+        Call<List<TagList>> call = service.createTagList(send_token, start, end);
+        call.enqueue(new Callback<List<TagList>>() {
+            @Override
+            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+
+                // 전송결과가 정상이면
+                Log.e("Write","in ====== onResponse");
+                if(response.isSuccessful()){
+                    tagList = response.body();  // TODO: 2017-08-14
+
+                    int d = tagList.get(10).count.한식;
+                    String f = tagList.get(12).count.양식;
+                    String h = tagList.get(10).count.중식;
+                    Log.i("CalendarAdapter","info=============="+d + "&" +f + h);
+                }else{
+                    int statusCode = response.code();
+                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TagList>> call, Throwable t) {
+                Log.e("MyTag","error==========="+t.getMessage());
             }
         });
     }

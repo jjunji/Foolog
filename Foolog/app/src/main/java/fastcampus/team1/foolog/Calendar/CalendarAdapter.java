@@ -44,8 +44,8 @@ public class CalendarAdapter extends BaseAdapter{
     int curMonth; // 현재 월
     Context context;
     String send_token;
-    String start, end;
-    List<TagList> tagList = new ArrayList<>();
+    static String start, end;
+    //List<TagList> tagList = new ArrayList<>();
 
     public CalendarAdapter(Context context, String token) {
 
@@ -60,7 +60,16 @@ public class CalendarAdapter extends BaseAdapter{
         calendar.add(Calendar.MONTH, curMonth);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // 실제 아이템 뷰에 넣어서 뷰로 보여줌
+        //setNetwork(send_token, start, end);
         Log.e("setNowMonth","Start & End==========="+ start + end);
+    }
+
+    public String getStart(){
+        return start;
+    }
+
+    public String getEnd(){
+        return end;
     }
 
     public void setPreviousMonth(){
@@ -146,7 +155,7 @@ public class CalendarAdapter extends BaseAdapter{
         }
 
         setTagQuery(dayOfWeek);
-        setNetwork(send_token, start, end);
+        //setNetwork(send_token, start, end);
     }
 
     public void setTagQuery(int dayOfWeek){
@@ -157,53 +166,12 @@ public class CalendarAdapter extends BaseAdapter{
         end = dateList.get(endNum);
     }
 
-    public void Calc(){
+/*    public void Calc(){
         String kor = tagList.get(14).count.한식;  // 1
         String chin = tagList.get(0).count.중식;
-    }
+    }*/
 
-    public void setNetwork(String send_token, String start, String end){
-        // okhttp log interceptor 사용
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
-        // 레트로핏 객체 정의
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.foolog.xyz/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        // 실제 서비스 인터페이스 생성.
-        iService service = retrofit.create(iService.class);
-        // 서비스 호출
-        Call<List<TagList>> call = service.createTagList(send_token, start, end);
-        call.enqueue(new Callback<List<TagList>>() {
-            @Override
-            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
-                // 전송결과가 정상이면
-                Log.e("Write","in ====== onResponse");
-                if(response.isSuccessful()){
-                    tagList = response.body();  // TODO: 2017-08-14
 
-                    String a = tagList.get(0).date;
-                    String b = tagList.get(1).date;
-                    String c = tagList.get(2).date;
-                    String d = tagList.get(3).count.한식;
-                    String f = tagList.get(12).count.양식;
-                    Log.i("CalendarAdapter","info=============="+d + "&" +f);
-                    Log.i("CalendarAdapter","date=============="+a+"  &  "+b +" & " + c);
-                }else{
-                    int statusCode = response.code();
-                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<TagList>> call, Throwable t) {
-                Log.e("MyTag","error==========="+t.getMessage());
-            }
-        });
-    }
 
 
     public String getDateList(int position){
@@ -254,8 +222,8 @@ public class CalendarAdapter extends BaseAdapter{
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        Log.e("Adapter", "getView 호출 시점 ======================getView start!!");
         MonthItemView view = new MonthItemView(context);
-
         view.setWeek(position); // 주말 표시 메서드
         view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
 
@@ -264,13 +232,3 @@ public class CalendarAdapter extends BaseAdapter{
     }
 
 }
-
-// TODO: 2017-08-1
-//
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.e("View","position================="+ position);
-//                Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
-//            }
-//        });

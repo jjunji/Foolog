@@ -9,7 +9,7 @@ public class TagList {
     public tagInfo count;
 
     public class tagInfo {
-        public String 한식;
+        public int 한식;
         public String 중식;
         public String 일식;
         public String 양식;
