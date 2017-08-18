@@ -40,7 +40,7 @@ public class MonthItemView extends RelativeLayout{
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.month_item, this, true);
 
-        textView = (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.date);
         font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
     }
 

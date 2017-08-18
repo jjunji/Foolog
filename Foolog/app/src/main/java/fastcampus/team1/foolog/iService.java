@@ -45,7 +45,7 @@ public interface iService {
     // stats/?start=20170811&end=20170814
     //@GET("stats/?start={start}&end={end}")
     //Call<TagList[]> createTagList(@Path("start") int start, @Path("end") int end);
-    @GET("stats/?")
+    @GET("stats/")
     Call<List<TagList>> createTagList(
                                 @Header("Authorization") String send_token,
                                 @Query("start") String start,

@@ -64,7 +64,7 @@ public class CalendarFragment extends Fragment {
     int lastDay; // 마지막 날
     int curYear; // 현재 년도
     int curMonth; // 현재 월
-
+    int dayOfWeek;
     static String start, end;
 
     public CalendarFragment() {
@@ -85,6 +85,7 @@ public class CalendarFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         Log.i("CalendarFragment", "===================CalendarFragment" + "Start");
+        initNetwork();
         initView();
         setMonthViewClickListener();  // 그리드뷰의 한 아이템 클릭시 이벤트 정의
         setButton();  // 전 달, 다음 달 이동 버튼 정의
@@ -126,7 +127,7 @@ public class CalendarFragment extends Fragment {
                 setTxtMonth();
                 setNetwork(send_token, start,end);
                 //어댑터가 바뀌었으니 notifyDataSetChanged
-                adapter.notifyDataSetChanged();
+
             }
         });
 
@@ -136,7 +137,7 @@ public class CalendarFragment extends Fragment {
                 setNextMonth();
                 setTxtMonth();
                 setNetwork(send_token, start,end);
-                adapter.notifyDataSetChanged();
+
             }
         });
     }
@@ -173,7 +174,6 @@ public class CalendarFragment extends Fragment {
         calendar.add(Calendar.MONTH, -1); // -1 : 이전 달로 이동
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // dayList & dateList 채우는 부분
-        //setNetwork();
         Log.e("setPreMonth","Start & End==========="+ start + end);
     }
 
@@ -225,7 +225,7 @@ public class CalendarFragment extends Fragment {
             dateList.add("");
         }
 
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 위에서 1일로 셋팅했으므로 1일이 무슨 요일인지 확인 -> 3(화)
+        dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 위에서 1일로 셋팅했으므로 1일이 무슨 요일인지 확인 -> 3(화)
         Log.i("Main","DAY_OF_WEEK==============="+ dayOfWeek);
 
         for (int i = 1; i < dayOfWeek; i++) {
@@ -252,7 +252,6 @@ public class CalendarFragment extends Fragment {
         }
 
         setTagQuery(dayOfWeek);
-        //setNetwork(send_token, start, end);
     }
 
     public void setTagQuery(int dayOfWeek){
@@ -294,47 +293,76 @@ public class CalendarFragment extends Fragment {
         }
     }
 
-    public void setNetwork(final String send_token, final String start, final String end){
+    iService service = null;
+    private void initNetwork(){
         // okhttp log interceptor 사용
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
 
         // 레트로핏 객체 정의
-        final Retrofit retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.foolog.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
 
+        service = retrofit.create(iService.class);
+    }
+
+    public void setNetwork(String send_token, String start, String end){
+
+        // 서비스 호출
+        Call<List<TagList>> call = service.createTagList(send_token, start, end);
+
+        Log.e("CalendarFragment","dayOfWeek1===============" + dayOfWeek);
+
+         call.enqueue(new Callback<List<TagList>>() {
+             @Override
+             public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+                 List<TagList> tagList = response.body();
+                 Log.e("CalendarFragment","dayOfWeek2===============" + dayOfWeek);
+                 adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek, lastDay);
+                 Log.e("CalendarFragment","dayOfWeek3===============" + dayOfWeek);
+                 monthView.setAdapter(adapter);
+                 //adapter.notifyDataSetChanged();
+             }
+
+             @Override
+             public void onFailure(Call<List<TagList>> call, Throwable t) {
+                 Log.e("CalendarFragment","error===============" + t.getMessage());
+             }
+         });
+
         // 1. AsyncTask execute할 때 전해줄 값  3. AsyncTask 종료 후 결과 값
-        new AsyncTask<Void, Void, List<TagList>>(){
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected List doInBackground(Void... params) {
-                final iService service = retrofit.create(iService.class);
-                // 서비스 호출
-                Call<List<TagList>> call = service.createTagList(send_token, start, end);
-                try {
-                    tagList = call.execute().body();
-                    //Log.i("CalendarFragment","tagList ================="+tagList);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return tagList;
-            }
-
-            @Override
-            protected void onPostExecute(List<TagList> tagList) {
-                super.onPostExecute(tagList);
-                adapter = new CalendarAdapter(context, dayList, curMonth, tagList);
-                monthView.setAdapter(adapter);
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, List<TagList>>(){
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//            }
+//
+//            @Override
+//            protected List doInBackground(Void... params) {
+//                final iService service = retrofit.create(iService.class);
+//                // 서비스 호출
+//                Call<List<TagList>> call = service.createTagList(send_token, start, end);
+//                try {
+//                    tagList = call.execute().body();
+//                    Log.i("CalendarFragment","Before getView =================");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return tagList;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<TagList> tagList) {
+//                super.onPostExecute(tagList);
+//                adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek, lastDay);
+//                Log.e("CalendarFragment","dayOfWeek===============" + dayOfWeek);
+//                monthView.setAdapter(adapter);
+//            }
+//        }.execute();
 
     }
 }
