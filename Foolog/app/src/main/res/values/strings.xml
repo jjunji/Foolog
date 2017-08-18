@@ -22,7 +22,6 @@
     <string name="navi_etc">기타</string>
 
 
-
     <!--todo 임시로 string을 부여했고 다듬으려면 CustomView를 통해서 태그를 만들어 놔야 한다. -->
     <string name="tag_korea">한식</string>
     <string name="tag_china">중식</string>

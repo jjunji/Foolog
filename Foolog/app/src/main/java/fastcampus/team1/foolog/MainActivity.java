@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fastcampus.team1.foolog.Chart.CircleChartActivity;
 import fastcampus.team1.foolog.Map.MapsActivity;
 import fastcampus.team1.foolog.util.PermissionControl;
 import me.huseyinozer.TooltipIndicator;
@@ -144,7 +145,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_circle_graph) {
-
+            Intent intent = new Intent(this, CircleChartActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_graph) {
 
         } else if (id == R.id.nav_share) {
