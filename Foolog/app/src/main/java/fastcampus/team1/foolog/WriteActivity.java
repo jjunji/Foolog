@@ -93,6 +93,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 //    private MapsActivity maps;
 
 
+    private Bitmap bitmap, rotateBitmap;
+
+
 
 
 
@@ -189,7 +192,9 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode ==Crop.REQUEST_CROP) {
+        if (resultCode == RESULT_OK ){
+            //&& requestCode ==Crop.REQUEST_CROP
+
             Uri imageUri = data.getData();
 
 //            Uri tempUri = beginCrop(imageUri);
@@ -460,14 +465,17 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inSampleSize = 2; // 이미지의 사이즈를 1/2로 축소
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
-            imgRotate(bitmap); // todo 트러블 슈팅
+            bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
+            rotateBitmap = imgRotate(bitmap); // 사진을 변환하게되면 EXIF 값중 회전값이 날아가는데 이걸 완충하려고 미리 오른쪽으로 90도를 돌린다.
+
+
 
             // 비트맵을 바이트 어레이로 변경 --> 이미지를 축소하려면 변경해야되고 , 전송까지 하려면 변경해야된다
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
             // Compress the bitmap to jpeg format and 50% image quality --> 크기줄인것을 압축을 하는 작업이다. (용량을줄인다)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+            rotateBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
 
 
             // Create a byte array from ByteArrayOutputStream  --> JPEG 포맷을 서버와의 통신을 위해 바이트어레이로 변경
@@ -495,6 +503,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
                     Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다", Toast.LENGTH_SHORT).show();
+
+                    // 통신이 다끝났을때 bitmap 누수 현상을 막기 위해서 recycle을 해주었고 일부 기기에서는 recycle이 되지 않아서 null값을 따로 넣어주었다.
+                    bitmap.recycle();
+                    bitmap = null;
+
+                    rotateBitmap.recycle();
+                    rotateBitmap = null;
+
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
@@ -518,8 +534,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
-        bmp.recycle();
+        bitmap = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
 
         return bitmap;
     }
