@@ -30,7 +30,6 @@ public class MonthItemView extends RelativeLayout{
 
     TextView textView;
     Typeface font;
-    //RecyclerView listView;
 
     public MonthItemView(Context context) {
         super(context);
@@ -38,18 +37,11 @@ public class MonthItemView extends RelativeLayout{
     }
 
     private void init(Context context){
-        // LayoutInflater inflater = (LayoutInflater.from(context.getApplicationContext()));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.month_item, this, true);
 
         textView = (TextView) findViewById(R.id.textView);
         font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
-
-/*        listView = (RecyclerView) findViewById(R.id.listView);
-        ArrayList<Data> datas = Loader.getData(context);
-        CustomRecycler adapter = new CustomRecycler(datas, this);
-        listView.setAdapter(adapter);
-        listView.setLayoutManager(new GridLayoutManager(context, 2));*/
     }
 
     /*
@@ -70,11 +62,8 @@ public class MonthItemView extends RelativeLayout{
 
     // 날짜, 오늘 날짜 표시
     public void setDay(String day, String month){
-        //Log.i("setToday", "day==============" + day);
-        //Log.i("setToday", "month============" + month);
-
         Boolean isToday = getDateString(day, month);
-        //Log.i("setToday", "flag=============" + isToday);
+
         if(isToday == true){
             textView.setBackgroundColor(getResources().getColor(R.color.colorToday));
             textView.setText(day);
@@ -105,6 +94,10 @@ public class MonthItemView extends RelativeLayout{
         }
 
         return flag;
+    }
+
+    public void setTag(){
+
     }
 
 }

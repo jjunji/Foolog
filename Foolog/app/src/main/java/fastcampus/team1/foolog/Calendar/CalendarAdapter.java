@@ -39,10 +39,11 @@ public class CalendarAdapter extends BaseAdapter{
     ArrayList<String> dayList = new ArrayList<String>();
     int curMonth;
 
-    public CalendarAdapter(Context context, ArrayList<String> dayList, int curMonth) {
+    public CalendarAdapter(Context context, ArrayList<String> dayList, int curMonth, List<TagList> tagList) {
         this.dayList = dayList;
         this.curMonth = curMonth;
         this.context = context;
+        this.tagList = tagList;
     }
 
     @Override
@@ -66,6 +67,7 @@ public class CalendarAdapter extends BaseAdapter{
         MonthItemView view = new MonthItemView(context);
         view.setWeek(position); // 주말 표시 메서드
         view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
+        view.setTag();
 
         return view;
     }
