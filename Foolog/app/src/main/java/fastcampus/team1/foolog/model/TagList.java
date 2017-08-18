@@ -10,12 +10,12 @@ public class TagList {
 
     public class tagInfo {
         public int 한식;
-        public String 중식;
-        public String 일식;
-        public String 양식;
-        public String 기타;
-        public String Good;
-        public String Soso;
-        public String Bad;
+        public int 중식;
+        public int 일식;
+        public int 양식;
+        public int 기타;
+        public int Good;
+        public int Soso;
+        public int Bad;
     }
 }

@@ -227,7 +227,6 @@ public class CalendarAdapter extends BaseAdapter{
         view.setWeek(position); // 주말 표시 메서드
         view.setDay(dayList.get(position), (curMonth+1)+"");  // 날짜, 오늘의 날짜 표시 메서드
 
-
         return view;
     }
 

@@ -38,9 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MonthItemView extends RelativeLayout{
 
     TextView textView;
-    TextView txtTag;
     Typeface font;
-    ImageView imgTag;
     RecyclerView listView;
 
     public MonthItemView(Context context) {

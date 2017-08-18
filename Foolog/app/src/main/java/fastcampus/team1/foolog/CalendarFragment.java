@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -19,11 +20,13 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.Dialog.CustomDialog;
+import fastcampus.team1.foolog.model.DayList;
 import fastcampus.team1.foolog.model.TagList;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -60,7 +63,6 @@ public class CalendarFragment extends Fragment {
     //// TODO: 2017-08-10
     public static CalendarFragment newInstance(Context mContext) {
         Bundle args = new Bundle();
-
         CalendarFragment fragment = new CalendarFragment();
         fragment.context = mContext;
         fragment.setArguments(args);
@@ -72,10 +74,10 @@ public class CalendarFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         Log.i("CalendarFragment", "===================CalendarFragment" + "Start");
-
         initView();
-        setAdapter();   // 어답터 연결
-        setTxtMonth();  // 달력 상단 월 표시 텍스트
+        setNetwork(send_token, "20170801", "20170831");
+        //setAdapter();   // 어답터 연결
+        //setTxtMonth();  // 달력 상단 월 표시 텍스트
         setMonthViewClickListener();  // 그리드뷰의 한 아이템 클릭시 이벤트 정의
         setButton();  // 전 달, 다음 달 이동 버튼 정의
 
@@ -89,10 +91,6 @@ public class CalendarFragment extends Fragment {
 
         font = Typeface.createFromAsset(getActivity().getAssets(), "yaFontBold.ttf");
 
-        setNetwork(send_token, "20170801", "20170831");
-
-        adapter = new CalendarAdapter(context, send_token);
-
         btnPrevious = (Button) view.findViewById(R.id.btnPrevious);
         btnNext = (Button) view.findViewById(R.id.btnNext);
 
@@ -100,8 +98,6 @@ public class CalendarFragment extends Fragment {
 
         monthView = (GridView) view.findViewById(R.id.monthView);
     }
-
-
 
     private void setAdapter() {
         monthView.setAdapter(adapter); // 그리드뷰(달력) 와 어댑터 연결 (안하면 뷰가 안보임)
@@ -152,45 +148,51 @@ public class CalendarFragment extends Fragment {
         });
     }
 
-    public void setNetwork(String send_token, String start, String end){
+    public void setNetwork(final String send_token, final String start, final String end){
         // okhttp log interceptor 사용
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
+
         // 레트로핏 객체 정의
-        Retrofit retrofit = new Retrofit.Builder()
+        final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.foolog.xyz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
         // 실제 서비스 인터페이스 생성.
-        iService service = retrofit.create(iService.class);
-        // 서비스 호출
-        Call<List<TagList>> call = service.createTagList(send_token, start, end);
-        call.enqueue(new Callback<List<TagList>>() {
+
+        // 1. AsyncTask execute할 때 전해줄 값  3. AsyncTask 종료 후 결과 값
+        new AsyncTask<Void, Void, List<TagList>>(){
             @Override
-            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
 
-                // 전송결과가 정상이면
-                Log.e("Write","in ====== onResponse");
-                if(response.isSuccessful()){
-                    tagList = response.body();  // TODO: 2017-08-14
-
-                    int d = tagList.get(10).count.한식;
-                    String f = tagList.get(12).count.양식;
-                    String h = tagList.get(10).count.중식;
-                    Log.i("CalendarAdapter","info=============="+d + "&" +f + h);
-                }else{
-                    int statusCode = response.code();
-                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
+            @Override
+            protected List doInBackground(Void... params) {
+                final iService service = retrofit.create(iService.class);
+                // 서비스 호출
+                Call<List<TagList>> call = service.createTagList(send_token, start, end);
+                try {
+                    tagList = call.execute().body();
+                    Log.i("CalendarFragment","tagList ================="+tagList);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                return tagList;
             }
 
             @Override
-            public void onFailure(Call<List<TagList>> call, Throwable t) {
-                Log.e("MyTag","error==========="+t.getMessage());
+            protected void onPostExecute(List<TagList> tagList) {
+                super.onPostExecute(tagList);
+                Log.i("CalendarFragment","Success : ==============="+ tagList.get(13).count.일식);
+                adapter = new CalendarAdapter(context, send_token);
+                setAdapter();
+                setTxtMonth();
             }
-        });
+        }.execute();
+
     }
 
 }
