@@ -62,16 +62,16 @@ public class CircleChartActivity extends AppCompatActivity {
                 //todo 이건 switch 문으로 나눠서 작업 [1] = 한식 , [2] 중식 ...
 
 
-                Log.e(TAG,"xData[0]"+xData[0]);
-                Log.e(TAG,"xData[1]"+xData[1]);
-                Log.e(TAG,"xData[2]"+xData[2]);
-                Log.e(TAG,"xData[3]"+xData[3]);
-                Log.e(TAG,"xData[4]"+xData[4]);
+                Log.e(TAG, "xData[0]" + xData[0]);
+                Log.e(TAG, "xData[1]" + xData[1]);
+                Log.e(TAG, "xData[2]" + xData[2]);
+                Log.e(TAG, "xData[3]" + xData[3]);
+                Log.e(TAG, "xData[4]" + xData[4]);
 
-                Log.e(TAG,"Entry=="+e.getY());
-                Log.e(TAG,"Highlight"+h);
+                Log.e(TAG, "Entry==" + e.getY());
+                Log.e(TAG, "Highlight" + h);
 
-                switch ((int) e.getY()){
+                switch ((int) e.getY()) {
                     // todo case로 위에있는 %를 받아와서 토슽 처리해준다
                 }
 
@@ -79,11 +79,11 @@ public class CircleChartActivity extends AppCompatActivity {
                     Toast.makeText(CircleChartActivity.this, xData[0] + "=" + e.getY(), Toast.LENGTH_SHORT).show();
                 } else if (xData[1] == "중식") {
                     Toast.makeText(CircleChartActivity.this, xData[1] + "=" + e.getY(), Toast.LENGTH_SHORT).show();
-                } else if (xData[2] == "일식"){
+                } else if (xData[2] == "일식") {
                     Toast.makeText(CircleChartActivity.this, xData[2] + "=" + e.getY(), Toast.LENGTH_SHORT).show();
-                } else if (xData[3] == "양식"){
+                } else if (xData[3] == "양식") {
                     Toast.makeText(CircleChartActivity.this, xData[3] + "=" + e.getY(), Toast.LENGTH_SHORT).show();
-                } else if (xData[4] == "기타"){
+                } else if (xData[4] == "기타") {
                     Toast.makeText(CircleChartActivity.this, xData[4] + "=" + e.getY(), Toast.LENGTH_SHORT).show();
                 }
 
