@@ -1,6 +1,9 @@
 package fastcampus.team1.foolog.Chart;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +24,13 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import java.util.ArrayList;
 
 import fastcampus.team1.foolog.R;
+import fastcampus.team1.foolog.iService;
+import fastcampus.team1.foolog.model.CircleChartTotal;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CircleChartActivity extends AppCompatActivity {
 
@@ -29,17 +39,29 @@ public class CircleChartActivity extends AppCompatActivity {
     private PieChart pieChart;
     private RelativeLayout relativeLayout;
 
-    private float[] yData = {25.3f, 10.2f, 50.2f, 70.2f, 8.2f};
-    private String[] xData = {"한식", "일식", "중식", "양식", "기타"};
+    private float[] yData;
+    private String[] xData;
+
+    private float koreaTag, japanTag, chinaTag, usaTag, etcTag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_circle_chart);
-        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        initView();
 
-        pieChart = (PieChart) findViewById(R.id.pieChart);
+        //todo 임시 temp값 설정
+        koreaTag = 5;
+        japanTag = 6;
+        chinaTag = 25;
+        usaTag = 10;
+        etcTag = 17;
+
+
+        yData = new float[]{koreaTag, japanTag, chinaTag, usaTag, etcTag};
+        xData = new String[]{"한식", "일식", "중식", "양식", "기타"};
+
 
         relativeLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
@@ -102,6 +124,11 @@ public class CircleChartActivity extends AppCompatActivity {
 
     }
 
+    private void initView() {
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        pieChart = (PieChart) findViewById(R.id.pieChart);
+    }
+
     private void addData() {
         Log.d(TAG, "addDataSet Started");
         ArrayList<PieEntry> yEntrys = new ArrayList<>();
@@ -155,6 +182,58 @@ public class CircleChartActivity extends AppCompatActivity {
 
         pieChart.highlightValue(null);
         pieChart.invalidate();
+
+    }
+
+
+    private void setTagData() {
+
+        SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
+        String shared_token = storage.getString("inputToken", " ");
+
+        String send_token = "Token " + shared_token;
+
+        Log.e(TAG, "shared_token==========" + shared_token);
+        Log.e(TAG, "send_token==========" + send_token);
+
+
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("데이터를 불러오는 잠시만 기다려주세요...");
+        progressDialog.show();
+
+
+        // 레트로핏 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.foolog.xyz/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // 인터페이스 불러오기
+        iService service = retrofit.create(iService.class);
+
+
+        Call<CircleChartTotal> getTagTotal = service.getTagTotal(send_token);
+        getTagTotal.enqueue(new Callback<CircleChartTotal>() {
+            @Override
+            public void onResponse(Call<CircleChartTotal> call, Response<CircleChartTotal> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+
+
+
+                } else {
+                    int statusCode = response.code();
+                    Log.i(TAG, "image 응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CircleChartTotal> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+
 
     }
 

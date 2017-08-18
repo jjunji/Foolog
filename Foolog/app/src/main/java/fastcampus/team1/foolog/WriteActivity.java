@@ -504,7 +504,8 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 if (response.isSuccessful()) {
                     Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다", Toast.LENGTH_SHORT).show();
 
-                    // 통신이 다끝났을때 bitmap 누수 현상을 막기 위해서 recycle을 해주었고 일부 기기에서는 recycle이 되지 않아서 null값을 따로 넣어주었다.
+                    // 통신이 다끝났을때 bitmap 누수 현상을 막기 위해서 recycle을 해주었고
+                    // 일부 기기에서는 recycle이 되지 않아서 null값을 따로 넣어주었다.
                     bitmap.recycle();
                     bitmap = null;
 
