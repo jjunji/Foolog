@@ -21,15 +21,6 @@ import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.Tag_Recycler.CustomRecycler;
 import fastcampus.team1.foolog.Tag_Recycler.Data;
 import fastcampus.team1.foolog.Tag_Recycler.Loader;
-import fastcampus.team1.foolog.iService;
-import fastcampus.team1.foolog.model.TagList;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by jhjun on 2017-08-04.
@@ -39,7 +30,7 @@ public class MonthItemView extends RelativeLayout{
 
     TextView textView;
     Typeface font;
-    RecyclerView listView;
+    //RecyclerView listView;
 
     public MonthItemView(Context context) {
         super(context);
@@ -54,11 +45,11 @@ public class MonthItemView extends RelativeLayout{
         textView = (TextView) findViewById(R.id.textView);
         font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
 
-        listView = (RecyclerView) findViewById(R.id.listView);
+/*        listView = (RecyclerView) findViewById(R.id.listView);
         ArrayList<Data> datas = Loader.getData(context);
         CustomRecycler adapter = new CustomRecycler(datas, this);
         listView.setAdapter(adapter);
-        listView.setLayoutManager(new GridLayoutManager(context, 2));
+        listView.setLayoutManager(new GridLayoutManager(context, 2));*/
     }
 
     /*
@@ -103,6 +94,8 @@ public class MonthItemView extends RelativeLayout{
         String date_temp = sdf.format(new Date());
         String[] date_today = date_temp.split("-");
         String today_month = date_today[0]; // 8
+        Log.i("MonthItemView","today_month : ==============="+ today_month);
+        Log.i("MonthItemView","month : ==============="+ month);
         String today_day = date_today[1]; // 13
 
         if(today_month.equals(month) && today_day.equals(day)){

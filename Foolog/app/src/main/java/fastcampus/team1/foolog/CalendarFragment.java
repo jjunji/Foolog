@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
@@ -55,6 +57,15 @@ public class CalendarFragment extends Fragment {
     String shared_token;
     Button btnPrevious, btnNext;
     List<TagList> tagList = new ArrayList<>();
+    Calendar calendar;
+    ArrayList<String> dayList = new ArrayList<String>();
+    ArrayList<String> dateList = new ArrayList<>(); // 포지션 값에 매칭되는 날짜를 저장하는 list(20170810)
+
+    int lastDay; // 마지막 날
+    int curYear; // 현재 년도
+    int curMonth; // 현재 월
+
+    static String start, end;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -75,9 +86,6 @@ public class CalendarFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         Log.i("CalendarFragment", "===================CalendarFragment" + "Start");
         initView();
-        setNetwork(send_token, "20170801", "20170831");
-        //setAdapter();   // 어답터 연결
-        //setTxtMonth();  // 달력 상단 월 표시 텍스트
         setMonthViewClickListener();  // 그리드뷰의 한 아이템 클릭시 이벤트 정의
         setButton();  // 전 달, 다음 달 이동 버튼 정의
 
@@ -97,22 +105,26 @@ public class CalendarFragment extends Fragment {
         txtMonth = (TextView) view.findViewById(R.id.txtMonth);
 
         monthView = (GridView) view.findViewById(R.id.monthView);
-    }
-
-    private void setAdapter() {
         monthView.setAdapter(adapter); // 그리드뷰(달력) 와 어댑터 연결 (안하면 뷰가 안보임)
-        adapter.setNowMonth();  // 실행과 동시에 현재 달력 보이게 설정.
+
+        Date date = new Date();
+        calendar = Calendar.getInstance();
+        calendar.setTime(date);  // calendar 에 현재 시간 설정.
+
+        setNowMonth();
+        setTxtMonth();
+        setNetwork(send_token, start, end);
     }
 
     // 전 달, 다음 달 이동 버튼
     private void setButton() {
-
         // 이전 월을 설정하고 그대로 표시됨.
         btnPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setPreviousMonth();
+                setPreviousMonth();
                 setTxtMonth();
+                setNetwork(send_token, start,end);
                 //어댑터가 바뀌었으니 notifyDataSetChanged
                 adapter.notifyDataSetChanged();
             }
@@ -121,8 +133,9 @@ public class CalendarFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setNextMonth();
+                setNextMonth();
                 setTxtMonth();
+                setNetwork(send_token, start,end);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -130,7 +143,7 @@ public class CalendarFragment extends Fragment {
 
     // 폰트 적용 함수
     private void setTxtMonth() {
-        txtMonth.setText(adapter.getCurrentYear() + "년" + adapter.getCurrentMonth() + "월");
+        txtMonth.setText(getCurrentYear() + "년" + getCurrentMonth() + "월");
         txtMonth.setTypeface(font);
     }
 
@@ -142,10 +155,143 @@ public class CalendarFragment extends Fragment {
                 //String position = String.valueOf(i);
                 //Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
                 //Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
-                customDialog = new CustomDialog(context, adapter.getDateList(position));
+                customDialog = new CustomDialog(context, getDateList(position));
                 customDialog.show();
             }
         });
+    }
+
+    public void setNowMonth(){
+        calendar.add(Calendar.MONTH, curMonth);
+        recalculate(); // 해당 월의 첫날, 마지막 날 계산
+        resetDayNumbers2();  // dayList & dateList 채우는 부분
+        //setNetwork(send_token, start, end);
+        Log.e("setNowMonth","Start & End==========="+ start + end);
+    }
+
+    public void setPreviousMonth(){
+        calendar.add(Calendar.MONTH, -1); // -1 : 이전 달로 이동
+        recalculate(); // 해당 월의 첫날, 마지막 날 계산
+        resetDayNumbers2(); // dayList & dateList 채우는 부분
+        //setNetwork();
+        Log.e("setPreMonth","Start & End==========="+ start + end);
+    }
+
+    public void setNextMonth(){
+        calendar.add(Calendar.MONTH, +1);
+        recalculate(); // 해당 월의 첫날, 마지막 날 계산
+        resetDayNumbers2(); // dayList & dateList 채우는 부분
+        Log.e("setNextMonth","Start & End==========="+ start + end);
+    }
+
+    public int getCurrentYear(){
+        return curYear;
+    }
+
+    public int getCurrentMonth(){
+        return (curMonth+1);
+    }
+
+
+    // 달력을 선택한 달의 연도 & 달로 설정하고, 1일이 시작되는 요일을 재계산하는 메소드
+    public void recalculate() {
+        // 날짜를 현재 달의 1일로 설정.
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  // -> 1 ex) 현재 8월이면 8월 1일 에서 1을 가져옴.
+        curYear = calendar.get(Calendar.YEAR);  // 2017
+        curMonth = calendar.get(Calendar.MONTH);  // 7 (0 부터 시작) -> 8월
+        lastDay = getLastDay();  // 셋팅 달의 마지막 날이 몇일인지 출력 -> 31
+        //setNetwork(dateList.get(Calendar.DAY_OF_MONTH), dateList.get(dateList.size()));
+
+        Log.i("Main","DAY_OF_MONTH==============="+ Calendar.DAY_OF_MONTH);
+        Log.i("Main","curYear==============="+ curYear);
+        Log.i("Main","curMonth==============="+ curMonth);
+        Log.i("Main","lastDay==============="+ lastDay);
+    }
+
+    public void resetDayNumbers2(){
+
+        dayList.clear();
+        dateList.clear();
+
+        dayList.add("일");
+        dayList.add("월");
+        dayList.add("화");
+        dayList.add("수");
+        dayList.add("목");
+        dayList.add("금");
+        dayList.add("토");
+
+        for(int i = 0; i<7; i++){
+            dateList.add("");
+        }
+
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 위에서 1일로 셋팅했으므로 1일이 무슨 요일인지 확인 -> 3(화)
+        Log.i("Main","DAY_OF_WEEK==============="+ dayOfWeek);
+
+        for (int i = 1; i < dayOfWeek; i++) {
+            dayList.add("");
+            dateList.add("");
+        }
+
+        for (int i = 1; i <= lastDay; i++) {
+            dayList.add("" + (i));
+
+            if( i<10 ){ // 10일 미만
+                if((curMonth+1) < 10){ // 10월 미만
+                    dateList.add(curYear +"0"+ (curMonth+1) +"0"+ (i));
+                }else{  // 10일 미만 10월 이상
+                    dateList.add(curYear +""+ (curMonth+1) +"0"+ (i));
+                }
+            }else{ // 10일 이상
+                if((curMonth+1) < 10){  // 10월 미만
+                    dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
+                }else{  // 10월 이상
+                    dateList.add(curYear +""+ (curMonth+1) +""+ (i));
+                }
+            }
+        }
+
+        setTagQuery(dayOfWeek);
+        //setNetwork(send_token, start, end);
+    }
+
+    public void setTagQuery(int dayOfWeek){
+        int startNum = dayOfWeek + 6; // 9
+        int endNum = dateList.size()-1; // 리스트 마지막 요소 -> 달의 마지막 날짜
+
+        start = dateList.get(startNum);
+        end = dateList.get(endNum);
+    }
+
+    public String getDateList(int position){
+        return dateList.get(position);
+    }
+
+    // 각 월 마다의 마지막 날 반환
+    public int getLastDay() {
+        switch (curMonth){
+            case 0: // 1월
+            case 2:
+            case 4:
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+                return 31;
+
+            case 3:
+            case 5:
+            case 8:
+            case 10:
+                return 30;
+
+            default:
+                if(((curYear%4 == 0) && (curYear%100 != 0)) || (curYear%400==0)) {
+                    return 29;
+                } else{
+                    return 28;
+                }
+        }
     }
 
     public void setNetwork(final String send_token, final String start, final String end){
@@ -186,13 +332,10 @@ public class CalendarFragment extends Fragment {
             @Override
             protected void onPostExecute(List<TagList> tagList) {
                 super.onPostExecute(tagList);
-                Log.i("CalendarFragment","Success : ==============="+ tagList.get(13).count.일식);
-                adapter = new CalendarAdapter(context, send_token);
-                setAdapter();
-                setTxtMonth();
+                adapter = new CalendarAdapter(context, dayList, curMonth);
+                monthView.setAdapter(adapter);
             }
         }.execute();
 
     }
-
 }
