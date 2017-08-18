@@ -173,10 +173,10 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
 //                maps.setMarker(latitude, longitude, editTitle.getText().toString(),editMemo.getText().toString(),txtFood.getText().toString());
                 break;
             case R.id.WriteImage:
-                WriteImage.setImageDrawable(null);
-//                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(Intent.createChooser(intent, "앱을 선택하세요"), 100);
-                Crop.pickImage(this);
+//                WriteImage.setImageDrawable(null);
+//                Crop.pickImage(this);
+                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(Intent.createChooser(intent, "앱을 선택하세요"), 100);
                 break;
         }
     }
@@ -461,7 +461,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inSampleSize = 2; // 이미지의 사이즈를 1/2로 축소
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
-//            imgRotate(bitmap); todo 트러블 슈팅
+            imgRotate(bitmap); // todo 트러블 슈팅
 
             // 비트맵을 바이트 어레이로 변경 --> 이미지를 축소하려면 변경해야되고 , 전송까지 하려면 변경해야된다
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
