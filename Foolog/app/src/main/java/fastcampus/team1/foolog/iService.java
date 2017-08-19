@@ -3,11 +3,16 @@ package fastcampus.team1.foolog;
 import java.util.List;
 
 import fastcampus.team1.foolog.model.Catalog;
+import fastcampus.team1.foolog.model.CircleChartTotal;
 import fastcampus.team1.foolog.model.DayList;
 import fastcampus.team1.foolog.model.Join;
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
+
+import fastcampus.team1.foolog.model.Marker;
+
 import fastcampus.team1.foolog.model.TagList;
+
 import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MultipartBody;
@@ -55,6 +60,13 @@ public interface iService {
     // Post List
     @GET("post/day/")
     Call<Catalog[]> createCatalog(@Header("Authorization") String send_token);
+
+    @GET("post/")
+    Call<List<Marker>> createMarker(@Header("Authorization") String send_token);
+
+
+    @GET("stats/tag/")
+    Call<CircleChartTotal> getTagTotal(@Header("Authorization") String send_token);
 
     // @Part() 안에있는것이 의미하는건 서버에서 안에있는 텍스트로 인식하게끔 만들어준다.(Server Api랑 일치)
     @Multipart

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.ExifInterface;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.MapsInitializer;
+import com.soundcloud.android.crop.Crop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -87,6 +90,13 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     String set_longitude;
 
     private GpsInfo gps;
+//    private MapsActivity maps;
+
+
+    private Bitmap bitmap, rotateBitmap;
+
+
+
 
 
     @Override
@@ -97,6 +107,7 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
         initView();
         setListener();
         setRadioGroup();
+        MapsInitializer.initialize(this);
 
     }
 
@@ -161,8 +172,12 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             // todo if문을 넣어서 아래쪽에 태그나 내용이 없으면 post가 안되게끔 해주자
             case R.id.btnPost:
                 uploadFile();
+//                maps = new MapsActivity();
+//                maps.setMarker(latitude, longitude, editTitle.getText().toString(),editMemo.getText().toString(),txtFood.getText().toString());
                 break;
             case R.id.WriteImage:
+//                WriteImage.setImageDrawable(null);
+//                Crop.pickImage(this);
                 intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(Intent.createChooser(intent, "앱을 선택하세요"), 100);
                 break;
@@ -177,8 +192,14 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK ){
+            //&& requestCode ==Crop.REQUEST_CROP
+
             Uri imageUri = data.getData();
+
+//            Uri tempUri = beginCrop(imageUri);
+
+
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
@@ -233,7 +254,46 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
 
         }
+//        else if(requestCode == Crop.REQUEST_CROP){
+//            handleCrop(resultCode,data);
+//        }
     }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.activity_main, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == R.id.action_select) {
+//            WriteImage.setImageDrawable(null);
+//            Crop.pickImage(this);
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
+    private Uri beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this);
+        return destination;
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            // Activity 의 RESULT_OK값을 사용
+            Log.d("handleCrop", "RESULT_OK");
+            WriteImage.setImageURI(Crop.getOutput(result));
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Log.d("handleCrop", "RESULT_ERROR");
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
 
     /**
      * Reverse Geocoding
@@ -405,13 +465,18 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inSampleSize = 2; // 이미지의 사이즈를 1/2로 축소
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
+            bitmap = BitmapFactory.decodeFile(imagePath, options); // 비트맵으로 만들어준다
+            rotateBitmap = imgRotate(bitmap); // 사진을 변환하게되면 EXIF 값중 회전값이 날아가는데 이걸 완충하려고 미리 오른쪽으로 90도를 돌린다.
+
+
 
             // 비트맵을 바이트 어레이로 변경 --> 이미지를 축소하려면 변경해야되고 , 전송까지 하려면 변경해야된다
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
             // Compress the bitmap to jpeg format and 50% image quality --> 크기줄인것을 압축을 하는 작업이다. (용량을줄인다)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+            rotateBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
+
 
             // Create a byte array from ByteArrayOutputStream  --> JPEG 포맷을 서버와의 통신을 위해 바이트어레이로 변경
             byte[] byteArray = stream.toByteArray();
@@ -438,6 +503,15 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
                     Toast.makeText(getBaseContext(), "글 작성이 완료 되었습니다", Toast.LENGTH_SHORT).show();
+
+                    // 통신이 다끝났을때 bitmap 누수 현상을 막기 위해서 recycle을 해주었고
+                    // 일부 기기에서는 recycle이 되지 않아서 null값을 따로 넣어주었다.
+                    bitmap.recycle();
+                    bitmap = null;
+
+                    rotateBitmap.recycle();
+                    rotateBitmap = null;
+
                     intent = new Intent(WriteActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
@@ -452,6 +526,18 @@ public class WriteActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+    }
+
+    private Bitmap imgRotate(Bitmap bmp){
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        bitmap = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
+
+        return bitmap;
     }
 
 
