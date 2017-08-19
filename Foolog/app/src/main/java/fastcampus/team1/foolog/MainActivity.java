@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.i("MainActivity","===================MainActivity"+"Start");
         initView();
         setFragment();
         setAdapter();
