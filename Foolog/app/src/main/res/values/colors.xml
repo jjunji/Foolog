@@ -4,4 +4,15 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorToolbar">#ec8a74</color>
+
+
+    <color name="color_korea">#007BBB</color>
+    <color name="color_japan">#82AE46</color>
+    <color name="color_china">#e83929</color>
+    <color name="color_usa">#e6b422</color>
+    <color name="color_etc">#824880</color>
+
+
+    <color name="colorToday">#eefef69d</color>
+
 </resources>

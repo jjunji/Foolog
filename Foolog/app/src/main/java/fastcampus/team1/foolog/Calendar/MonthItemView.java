@@ -1,15 +1,26 @@
 package fastcampus.team1.foolog.Calendar;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.AttributeSet;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import fastcampus.team1.foolog.R;
+import fastcampus.team1.foolog.Tag_Recycler.CustomRecycler;
+import fastcampus.team1.foolog.Tag_Recycler.Data;
+import fastcampus.team1.foolog.Tag_Recycler.Loader;
 
 /**
  * Created by jhjun on 2017-08-04.
@@ -26,11 +37,10 @@ public class MonthItemView extends RelativeLayout{
     }
 
     private void init(Context context){
-        // LayoutInflater inflater = (LayoutInflater.from(context.getApplicationContext()));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.month_item, this, true);
 
-        textView = (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.date);
         font = Typeface.createFromAsset(context.getAssets(), "yaFontBold.ttf");
     }
 
@@ -38,8 +48,9 @@ public class MonthItemView extends RelativeLayout{
      달력의 각 뷰는 0 부터 시작해 ++ 된다는 것을 확인 -> 일요일에 해당하는 뷰들은 position 0 7 14 21 로 진행.
      position 값을 7로 나누어 나머지가 0일 경우는 일요일을 뜻하므로 조건문으로 판단하여 텍스트를 붉게 표시함.
     */
-    // 달력(그리드 뷰)에 날짜를 설정
-    public void setDay(String day,int position){
+
+    // 달력(그리드 뷰)에 주말 표시
+    public void setWeek(int position){
         if( position % 7 == 0 ){
             textView.setTextColor(Color.RED);
         }else if( position % 7 == 6 ){
@@ -47,9 +58,47 @@ public class MonthItemView extends RelativeLayout{
         } else{
             textView.setTextColor(Color.BLACK);
         }
-
-        textView.setText(day);
-        textView.setTypeface(font);
     }
+
+    // 날짜, 오늘 날짜 표시
+    public void setDay(String day, String month){
+        Boolean isToday = getDateString(day, month);
+
+        if(isToday == true){
+            textView.setBackgroundColor(getResources().getColor(R.color.colorToday));
+            textView.setText(day);
+            textView.setTypeface(font);
+        }else{
+            textView.setText(day);
+            textView.setTypeface(font);
+        }
+    }
+
+    // 오늘의 날짜 판별
+    public boolean getDateString(String day, String month)
+    {
+        Boolean flag;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("M-dd", Locale.KOREA);
+        String date_temp = sdf.format(new Date());
+        String[] date_today = date_temp.split("-");
+        String today_month = date_today[0]; // 8
+        Log.i("MonthItemView","today_month : ==============="+ today_month);
+        Log.i("MonthItemView","month : ==============="+ month);
+        String today_day = date_today[1]; // 13
+
+        if(today_month.equals(month) && today_day.equals(day)){
+            flag = true;
+        }else{
+            flag = false;
+        }
+
+        return flag;
+    }
+
+    public void setTag(){
+
+    }
+
 }
 

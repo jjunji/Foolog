@@ -17,15 +17,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-
-import android.util.Log;
 import android.view.Menu;
-
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import fastcampus.team1.foolog.Chart.CircleChartActivity;
+import fastcampus.team1.foolog.Map.MapsActivity;
 import fastcampus.team1.foolog.util.PermissionControl;
 import me.huseyinozer.TooltipIndicator;
 
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.i("MainActivity","===================MainActivity"+"Start");
         initView();
         setFragment();
         setAdapter();
@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
     }
 
     public void initView(){
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -142,13 +142,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_circle_graph) {
+            Intent intent = new Intent(this, CircleChartActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_graph) {
 
         } else if (id == R.id.nav_share) {
 

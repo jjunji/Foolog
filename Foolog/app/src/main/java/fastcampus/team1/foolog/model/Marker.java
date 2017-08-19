@@ -1,10 +1,11 @@
 package fastcampus.team1.foolog.model;
 
 /**
- * Created by jhjun on 2017-08-10.
+ * Created by SeungHoShin on 2017. 8. 14..
  */
 
-public class DayList {
+public class Marker {
+
 
     public int pk;
     public UserInfo author;
