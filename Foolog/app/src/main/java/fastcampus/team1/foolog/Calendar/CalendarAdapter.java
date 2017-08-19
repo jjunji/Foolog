@@ -77,8 +77,8 @@ public class CalendarAdapter extends BaseAdapter{
         Log.i("CalendarAdapter", "dayList.size()=============" + dayList.size());  // 7+시작일+lastDay
         Log.i("CalendarAdapter", "tagList.size()=============" + tagList.size());
         Log.i("CalendarAdapter", "dayOfWeek===============" + dayOfWeek);  // 일욜 ~ 30.. // 3 -> 6
-        if(position >= dayOfWeek+6 && position <= dayList.size()){
-            view.setTags(tagList, position-9);
+        if(position >= dayOfWeek+6 && position < dayList.size()){
+            view.setTags(tagList, position-(dayOfWeek+6));
         }
         return view;
     }

@@ -333,36 +333,5 @@ public class CalendarFragment extends Fragment {
                  Log.e("CalendarFragment","error===============" + t.getMessage());
              }
          });
-
-        // 1. AsyncTask execute할 때 전해줄 값  3. AsyncTask 종료 후 결과 값
-//        new AsyncTask<Void, Void, List<TagList>>(){
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//            }
-//
-//            @Override
-//            protected List doInBackground(Void... params) {
-//                final iService service = retrofit.create(iService.class);
-//                // 서비스 호출
-//                Call<List<TagList>> call = service.createTagList(send_token, start, end);
-//                try {
-//                    tagList = call.execute().body();
-//                    Log.i("CalendarFragment","Before getView =================");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return tagList;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<TagList> tagList) {
-//                super.onPostExecute(tagList);
-//                adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek, lastDay);
-//                Log.e("CalendarFragment","dayOfWeek===============" + dayOfWeek);
-//                monthView.setAdapter(adapter);
-//            }
-//        }.execute();
-
     }
 }
