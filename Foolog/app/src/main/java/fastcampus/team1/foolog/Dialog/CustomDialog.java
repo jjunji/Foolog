@@ -25,8 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-
 public class CustomDialog extends Dialog {
 
     TextView txtDate,txtMemo, txtPlace;  // 다이얼로그의 각 위젯
@@ -66,13 +64,12 @@ public class CustomDialog extends Dialog {
         txtFood = (TextView) findViewById(R.id.txtFood);
         txtEval = (TextView) findViewById(R.id.txtEval);
         txtMemo = (TextView) findViewById(R.id.txtMemo);
-        txtPlace = (TextView) findViewById(R.id.txtPlace);
+        txtPlace = (TextView) findViewById(R.id.txtTag);
         imgFood = (ImageView) findViewById(R.id.imgFood);
 
         SharedPreferences storage = context.getSharedPreferences("storage", Activity.MODE_PRIVATE);
         String shared_token = storage.getString("inputToken", " ");
         send_token = "Token " + shared_token;
-        Log.e("Dialog","Token ====================="+ send_token);
     }
 
     private void setNetwork(){
@@ -90,6 +87,7 @@ public class CustomDialog extends Dialog {
         iService service = retrofit.create(iService.class);
         // 서비스 호출
         Call<DayList[]> call = service.createDayList(day,send_token);
+        Log.e("Dialog","Token ====================="+ send_token);
         //Call call = service.createDayList("day",day);
         call.enqueue(new Callback<DayList[]>() {
             @Override               // Call call..
