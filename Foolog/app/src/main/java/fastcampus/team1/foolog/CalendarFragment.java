@@ -345,15 +345,15 @@ public class CalendarFragment extends Fragment {
 
     // day 날짜 클릭시 넘어온 해당 날짜의 정보 YYYYMMDD -> Get Day list 에 전송하는 값
     private void setNetwork(String day){
-        Call<DayList[]> call = service.createDayList(day,send_token);
-        call.enqueue(new Callback<DayList[]>() {
+        Call<List<DayList>> call = service.createDayList(day,send_token);
+        call.enqueue(new Callback<List<DayList>>() {
             @Override
-            public void onResponse(Call<DayList[]> call, Response<DayList[]> response) {
+            public void onResponse(Call<List<DayList>> call, Response<List<DayList>> response) {
                 // 전송결과가 정상이면
                 Log.e("Write","in ====== onResponse");
                 if(response.isSuccessful()){
-                    dayListBody = response.body();
-                    if(dayListBody.length != 0){
+                    List<DayList> dayListBody = response.body();
+                    if(dayListBody.size() != 0){
                         customDialog = new CustomDialog(context, dayListBody);
                         customDialog.show();
                     }else{
@@ -367,7 +367,7 @@ public class CalendarFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<DayList[]> call, Throwable t) {
+            public void onFailure(Call<List<DayList>> call, Throwable t) {
                 Log.e("MyTag","error==========="+t.getMessage());
             }
         });

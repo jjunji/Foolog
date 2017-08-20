@@ -45,7 +45,7 @@ public interface iService {
 
     // Post Day list
     @GET("post/day/{day}/")
-    Call<DayList[]> createDayList(@Path("day") String day, @Header("Authorization") String send_token); // 토큰 값만 전송 & api 뒤에 날짜입력
+    Call<List<DayList>> createDayList(@Path("day") String day, @Header("Authorization") String send_token); // 토큰 값만 전송 & api 뒤에 날짜입력
 
     // stats/?start=20170811&end=20170814
     //@GET("stats/?start={start}&end={end}")
