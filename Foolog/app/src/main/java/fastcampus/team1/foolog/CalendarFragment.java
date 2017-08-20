@@ -2,6 +2,7 @@ package fastcampus.team1.foolog;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,7 +72,6 @@ public class CalendarFragment extends Fragment {
 
     DayList[] dayListBody;  // 다이얼로그 생성 전 Day list 에 대한 Response 를 받는 변수
 
-
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -115,6 +116,7 @@ public class CalendarFragment extends Fragment {
 
         monthView = (GridView) view.findViewById(R.id.monthView);
         monthView.setAdapter(adapter); // 그리드뷰(달력) 와 어댑터 연결 (안하면 뷰가 안보임)
+
     }
 
     private void initDate(){
@@ -315,14 +317,21 @@ public class CalendarFragment extends Fragment {
        2. 인자로 day(특정 한 날짜) -> 선택한 날짜에 해당하는 post Data
     */
     private void setNetwork(String send_token, String start, String end){
+
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("데이터를 불러오는 중입니다.");
+        progressDialog.show();
+
         // 서비스 호출
         Call<List<TagList>> call = service.createTagList(send_token, start, end);
 
          call.enqueue(new Callback<List<TagList>>() {
              @Override
              public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+                 progressDialog.dismiss();
                  List<TagList> tagList = response.body();
-                 adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek, lastDay);
+                 adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek);
                  monthView.setAdapter(adapter);
                  //adapter.notifyDataSetChanged();
              }
