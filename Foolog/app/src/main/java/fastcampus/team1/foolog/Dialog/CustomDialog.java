@@ -37,11 +37,12 @@ public class CustomDialog extends Dialog {
     Context context;
     String send_token;  // 통신에 필요한 헤더 값 (토큰)
     String day;  // 날짜 클릭시 넘어온 해당 날짜의 정보 YYYYMMDD -> Get Day list 에 전송하는 값
-    DayList[] dayList;
+    DayList[] dayListBody;
 
-    public CustomDialog(@NonNull Context context, String day) {
+    public CustomDialog(@NonNull Context context, DayList[] dayListBody) {
         super(context);
         this.context = context;
+        this.dayListBody = dayListBody;
         this.day = day;
     }
 
@@ -57,7 +58,11 @@ public class CustomDialog extends Dialog {
 
         setContentView(R.layout.activity_custom_dialog);
         init();
-        setNetwork();
+        setTag();
+        setImage();
+        setMemo();
+        setDate();
+        //setNetwork();
     }
 
     private void init(){
@@ -73,6 +78,7 @@ public class CustomDialog extends Dialog {
         send_token = "Token " + shared_token;
     }
 
+    /*
     private void setNetwork(){
         // okhttp log interceptor 사용
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -112,9 +118,9 @@ public class CustomDialog extends Dialog {
             }
         });
     }
-
+    */
     public void setTag(){
-        tag = dayList[0].tags;
+        tag = dayListBody[0].tags;
         String foodType = tag[0].type;
         String foodColor = tag[0].color;
         String foodText = tag[0].text;
@@ -131,19 +137,19 @@ public class CustomDialog extends Dialog {
     }
 
     public void setDate(){
-        date = dayList[0].date;
+        date = dayListBody[0].date;
         String dateSplit[];
         dateSplit = date.split(" ");
         txtDate.setText(dateSplit[0]);
     }
 
     public void setMemo(){
-        memo = dayList[0].text;
+        memo = dayListBody[0].text;
         txtMemo.setText(memo);
     }
 
     public void setImage(){
-        imageUrl = dayList[0].photo;
+        imageUrl = dayListBody[0].photo;
         Glide.with(context).load(imageUrl).into(imgFood);
     }
 }

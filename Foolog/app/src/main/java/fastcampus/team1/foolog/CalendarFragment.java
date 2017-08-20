@@ -67,6 +67,9 @@ public class CalendarFragment extends Fragment {
     int dayOfWeek;
     static String start, end;
 
+    DayList[] dayListBody;
+
+
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -153,12 +156,7 @@ public class CalendarFragment extends Fragment {
         monthView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if (dayList.size() != 0) {
-                    customDialog = new CustomDialog(context, getDateList(position));
-                    customDialog.show();
-                }else{
-
-                }
+                setNetwork(getDateList(position));
             }
         });
     }
@@ -334,5 +332,53 @@ public class CalendarFragment extends Fragment {
                  Log.e("CalendarFragment","error===============" + t.getMessage());
              }
          });
+    }
+
+    //
+    private void setNetwork(String day){
+        // okhttp log interceptor 사용
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
+        // 레트로핏 객체 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.foolog.xyz/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        // 실제 서비스 인터페이스 생성.
+        iService service = retrofit.create(iService.class);
+        // 서비스 호출
+        Call<DayList[]> call = service.createDayList(day,send_token);
+        Log.e("Dialog","Token ====================="+ send_token);
+        call.enqueue(new Callback<DayList[]>() {
+            @Override
+            public void onResponse(Call<DayList[]> call, Response<DayList[]> response) {
+                // 전송결과가 정상이면
+                Log.e("Write","in ====== onResponse");
+                if(response.isSuccessful()){
+                    dayListBody = response.body();
+                    if(dayListBody.length != 0){
+                        customDialog = new CustomDialog(context, dayListBody);
+                        customDialog.show();
+                    }else{
+                        Toast.makeText(context, "Nothing", Toast.LENGTH_SHORT).show();
+                    }
+                    //if()
+                    /*setDate();
+                    setImage();
+                    setTag();
+                    setMemo();*/
+                }else{
+                    int statusCode = response.code();
+                    Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DayList[]> call, Throwable t) {
+                Log.e("MyTag","error==========="+t.getMessage());
+            }
+        });
     }
 }
