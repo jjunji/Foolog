@@ -153,11 +153,12 @@ public class CalendarFragment extends Fragment {
         monthView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //String position = String.valueOf(i);
-                //Toast.makeText(context, "position : " + position, Toast.LENGTH_SHORT).show();
-                //Toast.makeText(context, adapter.getDateList(position), Toast.LENGTH_SHORT).show();
-                customDialog = new CustomDialog(context, getDateList(position));
-                customDialog.show();
+                if (dayList.size() != 0) {
+                    customDialog = new CustomDialog(context, getDateList(position));
+                    customDialog.show();
+                }else{
+
+                }
             }
         });
     }

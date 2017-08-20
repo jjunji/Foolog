@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.iService;
@@ -88,7 +89,6 @@ public class CustomDialog extends Dialog {
         // 서비스 호출
         Call<DayList[]> call = service.createDayList(day,send_token);
         Log.e("Dialog","Token ====================="+ send_token);
-        //Call call = service.createDayList("day",day);
         call.enqueue(new Callback<DayList[]>() {
             @Override               // Call call..
             public void onResponse(Call<DayList[]> call, Response<DayList[]> response) {
@@ -96,12 +96,10 @@ public class CustomDialog extends Dialog {
                 Log.e("Write","in ====== onResponse");
                 if(response.isSuccessful()){
                     dayList = response.body();
-
-                    setDate();
-                    setImage();
-                    setTag();
-                    setMemo();
-
+                        setDate();
+                        setImage();
+                        setTag();
+                        setMemo();
                 }else{
                     int statusCode = response.code();
                     Log.i("CustomDialog", "image 응답코드 ============= " + statusCode);
