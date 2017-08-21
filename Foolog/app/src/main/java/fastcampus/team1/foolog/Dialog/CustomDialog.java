@@ -25,9 +25,11 @@ import java.util.List;
 public class CustomDialog extends Dialog {
 
     Context context;
+    TextView txtDate;
     RecyclerView recyclerView;
     List<DayList> dayListBody = new ArrayList<>();
     CustomRecyclerViewAdapter adapter;
+    String date;
 
     public CustomDialog(@NonNull Context context, List<DayList> dayListBody) {
         super(context);
@@ -42,6 +44,7 @@ public class CustomDialog extends Dialog {
         setDialogWindow();
         setContentView(R.layout.activity_custom_dialog);
         init();
+        setDate();
     }
 
     private void init(){
@@ -49,6 +52,7 @@ public class CustomDialog extends Dialog {
         adapter = new CustomRecyclerViewAdapter(dayListBody, context);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        txtDate = (TextView) findViewById(R.id.txtDate);
     }
 
     private void setDialogWindow(){
@@ -57,6 +61,13 @@ public class CustomDialog extends Dialog {
         lpWindow.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         lpWindow.dimAmount = 0.8f;
         getWindow().setAttributes(lpWindow);
+    }
+
+    public void setDate(){
+        date = dayListBody.get(0).date;
+        String dateSplit[];
+        dateSplit = date.split(" ");
+        txtDate.setText(dateSplit[0]);
     }
 
 }
@@ -77,7 +88,7 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewA
         TextView txtDate,txtText, txtPlace;  // 다이얼로그의 각 위젯
         TextView txtFood, txtEval; // 태그 표현 위젯
         ImageView imgFood;  // 다이얼로그 위젯 - 이미지뷰
-        String date, memo;  // 서버로 부터 받은 날짜, 메모
+        String memo;  // 서버로 부터 받은 날짜, 메모
 
         public ViewHolder(View v) {
             super(v);
@@ -124,11 +135,6 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewA
         Glide.with(context).load(imageUrl).into(holder.imgFood);
     }
 }
-
-
-
-
-
 
 
 

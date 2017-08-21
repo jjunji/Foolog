@@ -70,8 +70,6 @@ public class CalendarFragment extends Fragment {
 
     iService service = null;
 
-    DayList[] dayListBody;  // 다이얼로그 생성 전 Day list 에 대한 Response 를 받는 변수
-
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -119,7 +117,7 @@ public class CalendarFragment extends Fragment {
 
     }
 
-    private void initDate(){
+    private void initDate() {
         Date date = new Date();
         calendar = Calendar.getInstance();
         calendar.setTime(date);  // calendar 에 현재 시간 설정.
@@ -133,7 +131,7 @@ public class CalendarFragment extends Fragment {
             public void onClick(View view) {
                 setPreviousMonth();
                 setTxtMonth();
-                setNetwork(send_token, start,end);
+                setNetwork(send_token, start, end);
             }
         });
 
@@ -142,7 +140,7 @@ public class CalendarFragment extends Fragment {
             public void onClick(View view) {
                 setNextMonth();
                 setTxtMonth();
-                setNetwork(send_token, start,end);
+                setNetwork(send_token, start, end);
 
             }
         });
@@ -164,34 +162,34 @@ public class CalendarFragment extends Fragment {
         });
     }
 
-    private void setNowMonth(){
+    private void setNowMonth() {
         calendar.add(Calendar.MONTH, curMonth);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2();  // dayList & dateList 채우는 부분
         //setNetwork(send_token, start, end);
-        Log.e("setNowMonth","Start & End==========="+ start + end);
+        Log.e("setNowMonth", "Start & End===========" + start + end);
     }
 
-    private void setPreviousMonth(){
+    private void setPreviousMonth() {
         calendar.add(Calendar.MONTH, -1); // -1 : 이전 달로 이동
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // dayList & dateList 채우는 부분
-        Log.e("setPreMonth","Start & End==========="+ start + end);
+        Log.e("setPreMonth", "Start & End===========" + start + end);
     }
 
-    private void setNextMonth(){
+    private void setNextMonth() {
         calendar.add(Calendar.MONTH, +1);
         recalculate(); // 해당 월의 첫날, 마지막 날 계산
         resetDayNumbers2(); // dayList & dateList 채우는 부분
-        Log.e("setNextMonth","Start & End==========="+ start + end);
+        Log.e("setNextMonth", "Start & End===========" + start + end);
     }
 
-    private int getCurrentYear(){
+    private int getCurrentYear() {
         return curYear;
     }
 
-    private int getCurrentMonth(){
-        return (curMonth+1);
+    private int getCurrentMonth() {
+        return (curMonth + 1);
     }
 
 
@@ -204,13 +202,13 @@ public class CalendarFragment extends Fragment {
         lastDay = getLastDay();  // 셋팅 달의 마지막 날이 몇일인지 출력 -> 31
         //setNetwork(dateList.get(Calendar.DAY_OF_MONTH), dateList.get(dateList.size()));
 
-        Log.i("Main","DAY_OF_MONTH==============="+ Calendar.DAY_OF_MONTH);
-        Log.i("Main","curYear==============="+ curYear);
-        Log.i("Main","curMonth==============="+ curMonth);
-        Log.i("Main","lastDay==============="+ lastDay);
+        Log.i("Main", "DAY_OF_MONTH===============" + Calendar.DAY_OF_MONTH);
+        Log.i("Main", "curYear===============" + curYear);
+        Log.i("Main", "curMonth===============" + curMonth);
+        Log.i("Main", "lastDay===============" + lastDay);
     }
 
-    private void resetDayNumbers2(){
+    private void resetDayNumbers2() {
 
         dayList.clear();
         dateList.clear();
@@ -223,12 +221,12 @@ public class CalendarFragment extends Fragment {
         dayList.add("금");
         dayList.add("토");
 
-        for(int i = 0; i<7; i++){
+        for (int i = 0; i < 7; i++) {
             dateList.add("");
         }
 
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 위에서 1일로 셋팅했으므로 1일이 무슨 요일인지 확인 -> 3(화)
-        Log.i("Main","DAY_OF_WEEK==============="+ dayOfWeek);
+        Log.i("Main", "DAY_OF_WEEK===============" + dayOfWeek);
 
         for (int i = 1; i < dayOfWeek; i++) {
             dayList.add("");
@@ -238,17 +236,17 @@ public class CalendarFragment extends Fragment {
         for (int i = 1; i <= lastDay; i++) {
             dayList.add("" + (i));
 
-            if( i<10 ){ // 10일 미만
-                if((curMonth+1) < 10){ // 10월 미만
-                    dateList.add(curYear +"0"+ (curMonth+1) +"0"+ (i));
-                }else{  // 10일 미만 10월 이상
-                    dateList.add(curYear +""+ (curMonth+1) +"0"+ (i));
+            if (i < 10) { // 10일 미만
+                if ((curMonth + 1) < 10) { // 10월 미만
+                    dateList.add(curYear + "0" + (curMonth + 1) + "0" + (i));
+                } else {  // 10일 미만 10월 이상
+                    dateList.add(curYear + "" + (curMonth + 1) + "0" + (i));
                 }
-            }else{ // 10일 이상
-                if((curMonth+1) < 10){  // 10월 미만
-                    dateList.add(curYear +"0"+ (curMonth+1) +""+ (i));
-                }else{  // 10월 이상
-                    dateList.add(curYear +""+ (curMonth+1) +""+ (i));
+            } else { // 10일 이상
+                if ((curMonth + 1) < 10) {  // 10월 미만
+                    dateList.add(curYear + "0" + (curMonth + 1) + "" + (i));
+                } else {  // 10월 이상
+                    dateList.add(curYear + "" + (curMonth + 1) + "" + (i));
                 }
             }
         }
@@ -256,21 +254,21 @@ public class CalendarFragment extends Fragment {
         setTagQuery(dayOfWeek);
     }
 
-    private void setTagQuery(int dayOfWeek){
+    private void setTagQuery(int dayOfWeek) {
         int startNum = dayOfWeek + 6; // 9
-        int endNum = dateList.size()-1; // 리스트 마지막 요소 -> 달의 마지막 날짜
+        int endNum = dateList.size() - 1; // 리스트 마지막 요소 -> 달의 마지막 날짜
 
         start = dateList.get(startNum);
         end = dateList.get(endNum);
     }
 
-    private String getDateList(int position){
+    private String getDateList(int position) {
         return dateList.get(position);
     }
 
     // 각 월 마다의 마지막 날 반환
     private int getLastDay() {
-        switch (curMonth){
+        switch (curMonth) {
             case 0: // 1월
             case 2:
             case 4:
@@ -287,16 +285,16 @@ public class CalendarFragment extends Fragment {
                 return 30;
 
             default:
-                if(((curYear%4 == 0) && (curYear%100 != 0)) || (curYear%400==0)) {
+                if (((curYear % 4 == 0) && (curYear % 100 != 0)) || (curYear % 400 == 0)) {
                     return 29;
-                } else{
+                } else {
                     return 28;
                 }
         }
     }
 
 
-    private void initNetwork(){
+    private void initNetwork() {
         // okhttp log interceptor 사용
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -316,7 +314,7 @@ public class CalendarFragment extends Fragment {
        1. 인자로 토큰, start,end -> 날짜 범위(start ~ end) 에 작성한 글에 포함된 항목별 태그 개수
        2. 인자로 day(특정 한 날짜) -> 선택한 날짜에 해당하는 post Data
     */
-    private void setNetwork(String send_token, String start, String end){
+    private void setNetwork(String send_token, String start, String end) {
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(context);
@@ -326,41 +324,42 @@ public class CalendarFragment extends Fragment {
         // 서비스 호출
         Call<List<TagList>> call = service.createTagList(send_token, start, end);
 
-         call.enqueue(new Callback<List<TagList>>() {
-             @Override
-             public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
-                 progressDialog.dismiss();
-                 List<TagList> tagList = response.body();
-                 adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek);
-                 monthView.setAdapter(adapter);
-                 //adapter.notifyDataSetChanged();
-             }
+        call.enqueue(new Callback<List<TagList>>() {
+            @Override
+            public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
+                progressDialog.dismiss();
+                List<TagList> tagList = response.body();
+                adapter = new CalendarAdapter(context, dayList, curMonth, tagList, dayOfWeek);
+                monthView.setAdapter(adapter);
+                //adapter.notifyDataSetChanged();
+            }
 
-             @Override
-             public void onFailure(Call<List<TagList>> call, Throwable t) {
-                 Log.e("CalendarFragment","error===============" + t.getMessage());
-             }
-         });
+            @Override
+            public void onFailure(Call<List<TagList>> call, Throwable t) {
+                Log.e("CalendarFragment", "error===============" + t.getMessage());
+            }
+        });
     }
 
     // day 날짜 클릭시 넘어온 해당 날짜의 정보 YYYYMMDD -> Get Day list 에 전송하는 값
-    private void setNetwork(String day){
-        Call<List<DayList>> call = service.createDayList(day,send_token);
+
+    private void setNetwork(String day) {
+        Call<List<DayList>> call = service.createDayList(day, send_token);
         call.enqueue(new Callback<List<DayList>>() {
             @Override
             public void onResponse(Call<List<DayList>> call, Response<List<DayList>> response) {
                 // 전송결과가 정상이면
-                Log.e("Write","in ====== onResponse");
-                if(response.isSuccessful()){
+                Log.e("Write", "in ====== onResponse");
+                if (response.isSuccessful()) {
                     List<DayList> dayListBody = response.body();
-                    if(dayListBody.size() != 0){
+                    if (dayListBody.size() != 0) {
                         customDialog = new CustomDialog(context, dayListBody);
                         customDialog.show();
-                    }else{
+                    } else {
                         Toast.makeText(context, "Nothing", Toast.LENGTH_SHORT).show();
                     }
 
-                }else{
+                } else {
                     int statusCode = response.code();
                     Log.i("CalendarFragment", "응답코드 ============= " + statusCode);
                 }
@@ -368,7 +367,7 @@ public class CalendarFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<DayList>> call, Throwable t) {
-                Log.e("MyTag","error==========="+t.getMessage());
+                Log.e("MyTag", "error===========" + t.getMessage());
             }
         });
     }

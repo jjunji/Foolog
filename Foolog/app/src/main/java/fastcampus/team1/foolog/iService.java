@@ -2,6 +2,7 @@ package fastcampus.team1.foolog;
 
 import java.util.List;
 
+import fastcampus.team1.foolog.model.AllList;
 import fastcampus.team1.foolog.model.Catalog;
 import fastcampus.team1.foolog.model.CircleChartTotal;
 import fastcampus.team1.foolog.model.DayList;
@@ -39,9 +40,8 @@ public interface iService {
     @POST("member/login/")
     Call<LoginResult> createLogin(@Body Login login);
 
-    //todo Call 앞부분은 받는걸 써야한다
-    @POST("post/")
-    Call<WriteListResult> createPost(@Body WriteCreate writeCreate, @Header("Authorization") String send_token); //todo Header
+    @GET("post/")
+    Call<List<AllList>> getAllList(@Header("Authorization") String send_token);
 
     // Post Day list
     @GET("post/day/{day}/")
@@ -57,9 +57,6 @@ public interface iService {
                                 @Query("end") String end
                                 );
 
-    // Post List
-    @GET("post/day/")
-    Call<Catalog[]> createCatalog(@Header("Authorization") String send_token);
 
     @GET("post/")
     Call<List<Marker>> createMarker(@Header("Authorization") String send_token);
@@ -81,6 +78,5 @@ public interface iService {
                                       @Part ("longitude")RequestBody longitude
 //                                      @Part MultipartBody.Part date,
                                         );
-
 
 }
