@@ -48,6 +48,7 @@
 
             <ImageView
                 android:id="@+id/WriteImage"
+                android:scaleType="centerCrop"
                 android:layout_width="100dp"
                 android:layout_height="300dp"
                 android:layout_weight="1"

@@ -1,5 +1,6 @@
 package fastcampus.team1.foolog.Dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -7,12 +8,14 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.model.DayList;
@@ -72,25 +75,92 @@ public class CustomDialog extends Dialog {
 
 }
 
-class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.ViewHolder>{
+class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    //private static final int TYPE_HEADER = 0;
+    private static final int TYPE_FOOTER = 0;
+    private static final int TYPE_ITEM = 1;
 
     List<DayList> dayListBody = new ArrayList<>();
     String imageUrl;
     Context context;
     DayList.Tag[] tag; // 태그 값 -> json 배열
 
-    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context){
+    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context) {
         this.dayListBody = dayListBody;
         this.context = context;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_FOOTER) {
+            //Inflating footer view
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_footer, parent, false);
+            return new FooterViewHolder(itemView);
+        }else if (viewType == TYPE_ITEM) {
+            //Inflating recycle view item layout
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_dialog_item, parent, false);
+            return new ItemViewHolder(itemView);
+        } return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
+        if (holder instanceof FooterViewHolder) {
+            if(position == dayListBody.size()+1){
+                FooterViewHolder footerHolder = (FooterViewHolder) holder;
+                footerHolder.footerText.setText("Footer View");
+            }
+        } else if (holder instanceof ItemViewHolder) {
+            ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+            //itemViewHolder.itemText.setText("Recycler Item " + position);
+            if(position < dayListBody.size()) {
+                itemViewHolder.txtText.setText(dayListBody.get(position).text);
+                setTag(position, itemViewHolder);
+                setImage(position, itemViewHolder);
+                itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @SuppressLint("LongLogTag")
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Log.e("CustomRecyclerViewAdapter", "LongClickPosition==========="+dayListBody.get(position).pk);
+                        return false;
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == dayListBody.size()) {
+            return TYPE_FOOTER;
+        }else{
+            return TYPE_ITEM;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return dayListBody.size()+1;
+    }
+
+    private class FooterViewHolder extends RecyclerView.ViewHolder {
+        TextView footerText;
+
+        public FooterViewHolder(View view) {
+            super(view);
+            footerText = (TextView) view.findViewById(R.id.footer_text);
+        }
+    }
+
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView txtDate,txtText, txtPlace;  // 다이얼로그의 각 위젯
         TextView txtFood, txtEval; // 태그 표현 위젯
         ImageView imgFood;  // 다이얼로그 위젯 - 이미지뷰
         String memo;  // 서버로 부터 받은 날짜, 메모
 
-        public ViewHolder(View v) {
+        public ItemViewHolder(View v) {
             super(v);
             txtText = (TextView) v.findViewById(R.id.txtText);
             txtFood = (TextView) v.findViewById(R.id.txtFood);
@@ -98,26 +168,7 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewA
             imgFood = (ImageView) v.findViewById(R.id.imgFood);
         }
     }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_dialog_item, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.txtText.setText(dayListBody.get(position).text);
-        setTag(position, holder);
-        setImage(position, holder);
-    }
-
-    @Override
-    public int getItemCount() {
-        return dayListBody.size();
-    }
-
-    public void setTag(int position, ViewHolder holder){
+    public void setTag(int position, ItemViewHolder holder){
         tag = dayListBody.get(position).tags;
         String foodColor = tag[0].color;
         String foodText = tag[0].text;
@@ -130,10 +181,11 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewA
         holder.txtEval.setTextColor(Color.parseColor(evalColor));
     }
 
-    public void setImage(int position, ViewHolder holder){
+    public void setImage(int position, ItemViewHolder holder){
         imageUrl = dayListBody.get(position).photo;
         Glide.with(context).load(imageUrl).into(holder.imgFood);
     }
+
 }
 
 

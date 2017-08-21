@@ -342,7 +342,6 @@ public class CalendarFragment extends Fragment {
     }
 
     // day 날짜 클릭시 넘어온 해당 날짜의 정보 YYYYMMDD -> Get Day list 에 전송하는 값
-
     private void setNetwork(String day) {
         Call<List<DayList>> call = service.createDayList(day, send_token);
         call.enqueue(new Callback<List<DayList>>() {
