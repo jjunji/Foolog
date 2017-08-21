@@ -352,7 +352,7 @@ public class CalendarFragment extends Fragment {
                 if (response.isSuccessful()) {
                     List<DayList> dayListBody = response.body();
                     if (dayListBody.size() != 0) {
-                        customDialog = new CustomDialog(context, dayListBody);
+                        customDialog = new CustomDialog(context, dayListBody, send_token);
                         customDialog.show();
                     } else {
                         Toast.makeText(context, "Nothing", Toast.LENGTH_SHORT).show();

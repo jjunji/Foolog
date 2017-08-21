@@ -6,6 +6,7 @@ import fastcampus.team1.foolog.model.AllList;
 import fastcampus.team1.foolog.model.Catalog;
 import fastcampus.team1.foolog.model.CircleChartTotal;
 import fastcampus.team1.foolog.model.DayList;
+import fastcampus.team1.foolog.model.Delete;
 import fastcampus.team1.foolog.model.Join;
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
@@ -20,6 +21,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -43,6 +45,7 @@ public interface iService {
     @GET("post/")
     Call<List<AllList>> getAllList(@Header("Authorization") String send_token);
 
+
     // Post Day list
     @GET("post/day/{day}/")
     Call<List<DayList>> createDayList(@Path("day") String day, @Header("Authorization") String send_token); // 토큰 값만 전송 & api 뒤에 날짜입력
@@ -61,6 +64,9 @@ public interface iService {
     @GET("post/")
     Call<List<Marker>> createMarker(@Header("Authorization") String send_token);
 
+    @DELETE("post/{pk}/")
+    Call<Delete> deletePost(@Header("Authorization") String send_token,
+                            @Path("pk") String pk);
 
     @GET("stats/tag/")
     Call<CircleChartTotal> getTagTotal(@Header("Authorization") String send_token);

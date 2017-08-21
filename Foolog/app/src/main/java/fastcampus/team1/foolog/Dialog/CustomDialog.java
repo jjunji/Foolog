@@ -3,9 +3,13 @@ package fastcampus.team1.foolog.Dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,8 +21,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fastcampus.team1.foolog.ListRecyclerViewAdapter;
 import fastcampus.team1.foolog.R;
+import fastcampus.team1.foolog.iService;
+import fastcampus.team1.foolog.model.AllList;
 import fastcampus.team1.foolog.model.DayList;
+import fastcampus.team1.foolog.model.Delete;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.bumptech.glide.Glide;
 
@@ -32,12 +47,13 @@ public class CustomDialog extends Dialog {
     RecyclerView recyclerView;
     List<DayList> dayListBody = new ArrayList<>();
     CustomRecyclerViewAdapter adapter;
-    String date;
+    String date, send_token;
 
-    public CustomDialog(@NonNull Context context, List<DayList> dayListBody) {
+    public CustomDialog(@NonNull Context context, List<DayList> dayListBody, String send_token) {
         super(context);
         this.context = context;
         this.dayListBody = dayListBody;
+        this.send_token = send_token;
     }
 
     @Override
@@ -52,7 +68,7 @@ public class CustomDialog extends Dialog {
 
     private void init(){
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new CustomRecyclerViewAdapter(dayListBody, context);
+        adapter = new CustomRecyclerViewAdapter(dayListBody, context, send_token);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         txtDate = (TextView) findViewById(R.id.txtDate);
@@ -85,10 +101,14 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     String imageUrl;
     Context context;
     DayList.Tag[] tag; // 태그 값 -> json 배열
+    iService service = null;
+    String send_token;
 
-    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context) {
+    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context, String send_token) {
         this.dayListBody = dayListBody;
         this.context = context;
+        this.send_token = send_token;
+        initNetwork();
     }
 
     @Override
@@ -124,6 +144,17 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     @Override
                     public boolean onLongClick(View view) {
                         Log.e("CustomRecyclerViewAdapter", "LongClickPosition==========="+dayListBody.get(position).pk);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Post 삭제");
+                        builder.setMessage("삭제 하시겠습니까?");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.i("Adapter", "i==================="+i);
+                                setNetwork(dayListBody.get(position).pk);
+                            }
+                        });
+                        builder.show();
                         return false;
                     }
                 });
@@ -186,8 +217,45 @@ class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         Glide.with(context).load(imageUrl).into(holder.imgFood);
     }
 
-}
+    private void initNetwork(){
+        // okhttp log interceptor 사용
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(logging).build();
 
+        // 레트로핏 객체 정의
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.foolog.xyz/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        service = retrofit.create(iService.class);
+    }
+
+    private void setNetwork(int pk){
+        Call<Delete> call = service.deletePost(send_token, (pk+""));
+        call.enqueue(new Callback<Delete>() {
+            @Override
+            public void onResponse(Call<Delete> call, Response<Delete> response) {
+                // 전송결과가 정상이면
+                Log.e("Write","in ====== onResponse");
+                if(response.isSuccessful()){
+                    Toast.makeText(context, "good", Toast.LENGTH_SHORT).show();
+                }else{
+                    int statusCode = response.code();
+                    Log.i("ShowListFragment", "응답코드 ============= " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Delete> call, Throwable t) {
+                Log.e("MyTag","error==========="+t.getMessage());
+            }
+        });
+    }
+
+}
 
 
 // TODO: 2017-08-11  아래와 같이 할 경우 왜 안되는지 & Glide.with(context) 의미
