@@ -237,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // 인터페이스 불러오기
         iService service = retrofit.create(iService.class);
 
-        Call<List<Marker>> markerList = service.createMarker(send_token);
+        final Call<List<Marker>> markerList = service.createMarker(send_token);
         markerList.enqueue(new Callback<List<Marker>>() {
             @Override
             public void onResponse(Call<List<Marker>> call, Response<List<Marker>> response) {
@@ -253,15 +253,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(2).tags[0].text);
                     Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(3).tags[0].text);
 
-
+                    // todo 예외처리 , location값이 없었을때의 예외 처리
                     for (int i =0; i < marker.size() ; i++) {
-                        if (marker.get(i) != null) {
+                        if (marker.get(i).location.latitude!=null && marker.get(i).location.longitude!=null &&
+                                marker.get(i).location.title!=null && marker.get(i).location.memo!=null) {
+                            if (marker.get(i) != null) {
 
-                            setMarker(marker.get(i).location.latitude,
-                                    marker.get(i).location.longitude,
-                                    marker.get(i).location.title,
-                                    marker.get(i).location.memo,
-                                    marker.get(i).tags[0].text);
+                                setMarker(marker.get(i).location.latitude,
+                                        marker.get(i).location.longitude,
+                                        marker.get(i).location.title,
+                                        marker.get(i).location.memo,
+                                        marker.get(i).tags[0].text);
+                            }
                         }
                     }
 
