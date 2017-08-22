@@ -52,10 +52,18 @@ public interface iService {
     //Call<TagList[]> createTagList(@Path("start") int start, @Path("end") int end);
     @GET("stats/")
     Call<List<TagList>> createTagList(
-                                @Header("Authorization") String send_token,
-                                @Query("start") String start,
-                                @Query("end") String end
-                                );
+            @Header("Authorization") String send_token,
+            @Query("start") String start,
+            @Query("end") String end
+    );
+
+    @GET("stats/")
+    Call<List<TagList>> createDatePick(
+            @Header("Authorization") String send_token,
+            @Query("start") String start,
+            @Query("end") String end
+    );
+
 
     // Post List
     @GET("post/day/")
@@ -77,10 +85,10 @@ public interface iService {
                                       @Part("tags") RequestBody tags,
                                       @Part("title") RequestBody title,
                                       @Part("memo") RequestBody memo,
-                                      @Part ("latitude")RequestBody latitude,
-                                      @Part ("longitude")RequestBody longitude
+                                      @Part("latitude") RequestBody latitude,
+                                      @Part("longitude") RequestBody longitude
 //                                      @Part MultipartBody.Part date,
-                                        );
+    );
 
 
 }

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
 
+import fastcampus.team1.foolog.Dialog.ChartDialog;
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.iService;
 import fastcampus.team1.foolog.model.CircleChartTotal;
@@ -43,7 +45,8 @@ public class CircleChartActivity extends AppCompatActivity {
     float koreaTag, japanTag, chinaTag, usaTag, etcTag;
     CircleChartTotal total;
     TextView txtTotal;
-    private Button btnDate;
+    Button btnDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,21 @@ public class CircleChartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_circle_chart);
         initView();
         setTotalData();
+
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChartDialog chartDialog = new ChartDialog(CircleChartActivity.this);
+                chartDialog.show();
+            }
+        });
+
     }
+
+
+
+
+
 
     private void initView() {
         relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
@@ -84,15 +101,15 @@ public class CircleChartActivity extends AppCompatActivity {
                 Log.e(TAG, "Highlight" + h);
 
                 if (e.getY() == koreaTag) {
-                    Toast.makeText(CircleChartActivity.this, xData[0] + "=" + (int)e.getY() + "개", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CircleChartActivity.this, xData[0] + "=" + (int) e.getY() + "개", Toast.LENGTH_SHORT).show();
                 } else if (e.getY() == chinaTag) {
-                    Toast.makeText(CircleChartActivity.this, xData[1] + "=" + (int)e.getY() + "개", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CircleChartActivity.this, xData[1] + "=" + (int) e.getY() + "개", Toast.LENGTH_SHORT).show();
                 } else if (e.getY() == japanTag) {
-                    Toast.makeText(CircleChartActivity.this, xData[2] + "=" + (int)e.getY() + "개", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CircleChartActivity.this, xData[2] + "=" + (int) e.getY() + "개", Toast.LENGTH_SHORT).show();
                 } else if (e.getY() == usaTag) {
-                    Toast.makeText(CircleChartActivity.this, xData[3] + "=" + (int)e.getY() + "개", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CircleChartActivity.this, xData[3] + "=" + (int) e.getY() + "개", Toast.LENGTH_SHORT).show();
                 } else if (e.getY() == etcTag) {
-                    Toast.makeText(CircleChartActivity.this, xData[4] + "=" + (int)e.getY() + "개", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CircleChartActivity.this, xData[4] + "=" + (int) e.getY() + "개", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -197,7 +214,9 @@ public class CircleChartActivity extends AppCompatActivity {
     /**
      * DateChart 네트워크 통신 함수
      */
-    private void setDateData(){
+    private void setDateData() {
+
+
 
     }
 
