@@ -213,7 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mGoogleMap.addMarker(new MarkerOptions().position(temp).title("Marker in Sydney"));
     }
 
-    public void setNetwork(){
+    public void setNetwork() {
 
         SharedPreferences storage = getSharedPreferences("storage", Activity.MODE_PRIVATE);
         String shared_token = storage.getString("inputToken", " ");
@@ -244,33 +244,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (response.isSuccessful()) {
 
                     marker = response.body();
-                    Log.e("MapsACT","marker==" + marker);
-                    Log.e("MapsACT","marker[0]==" + marker.get(0).location.title);
-                    Log.e("MapsACT","marker.size==" + marker.size());
-                    Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(0).tags[0].text);
-                    Log.e("MapsACT","marker.get(0).tags[1].text==" + marker.get(0).tags[1].text);
-                    Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(1).tags[0].text);
-                    Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(2).tags[0].text);
-                    Log.e("MapsACT","marker.get(0).tags[0].text==" + marker.get(3).tags[0].text);
+                    Log.e("MapsACT", "marker==" + marker);
+                    Log.e("MapsACT", "marker[0]==" + marker.get(0).location.title);
+                    Log.e("MapsACT", "marker.size==" + marker.size());
+                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(0).tags[0].text);
+                    Log.e("MapsACT", "marker.get(0).tags[1].text==" + marker.get(0).tags[1].text);
+                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(1).tags[0].text);
+                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(2).tags[0].text);
+                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(3).tags[0].text);
 
                     // todo 예외처리 , location값이 없었을때의 예외 처리
-                    for (int i =0; i < marker.size() ; i++) {
-                        if (marker.get(i).location.latitude!=null && marker.get(i).location.longitude!=null &&
-                                marker.get(i).location.title!=null && marker.get(i).location.memo!=null) {
-                            if (marker.get(i) != null) {
-
-                                setMarker(marker.get(i).location.latitude,
-                                        marker.get(i).location.longitude,
-                                        marker.get(i).location.title,
-                                        marker.get(i).location.memo,
-                                        marker.get(i).tags[0].text);
-                            }
+                    for (int i = 0; i < marker.size(); i++) {
+                        if (marker.get(i).location != null) {
+                            setMarker(marker.get(i).location.latitude,
+                                    marker.get(i).location.longitude,
+                                    marker.get(i).location.title,
+                                    marker.get(i).location.memo,
+                                    marker.get(i).tags[0].text);
                         }
                     }
 
 
-
-                }else{
+                } else {
                     int statusCode = response.code();
                     Log.i("WriteActivity", "응답코드 ============= " + statusCode);
                 }
@@ -288,7 +283,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLng latLng = new LatLng(latitude, longitude);
         // todo 마커를 원하는 이미지로 변경해줘야함
-        if (latLng!=null) {
+        if (latLng != null) {
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
@@ -379,9 +374,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
-
-
-
 
 
     //여기부터는 런타임 퍼미션 처리을 위한 메소드들
