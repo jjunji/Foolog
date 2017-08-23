@@ -30,6 +30,7 @@ import java.util.List;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.Dialog.CustomDialog;
+import fastcampus.team1.foolog.Dialog.CustomRecyclerViewAdapter;
 import fastcampus.team1.foolog.model.DayList;
 import fastcampus.team1.foolog.model.TagList;
 import okhttp3.OkHttpClient;
@@ -45,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * A simple {@link Fragment} subclass.
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class CalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment implements CustomRecyclerViewAdapter.RefreshCallback{
 
     TextView txtMonth;
     GridView monthView;
@@ -61,6 +62,7 @@ public class CalendarFragment extends Fragment {
     Calendar calendar;
     ArrayList<String> dayList = new ArrayList<String>();
     ArrayList<String> dateList = new ArrayList<>(); // 포지션 값에 매칭되는 날짜를 저장하는 list(20170810)
+    //RefreshCallback refreshCallback;
 
     int lastDay; // 마지막 날
     int curYear; // 현재 년도
@@ -352,7 +354,7 @@ public class CalendarFragment extends Fragment {
                 if (response.isSuccessful()) {
                     List<DayList> dayListBody = response.body();
                     if (dayListBody.size() != 0) {
-                        customDialog = new CustomDialog(context, dayListBody, send_token);
+                        customDialog = new CustomDialog(context, dayListBody, send_token, CalendarFragment.this);
                         customDialog.show();
                     } else {
                         Toast.makeText(context, "Nothing", Toast.LENGTH_SHORT).show();
@@ -369,5 +371,10 @@ public class CalendarFragment extends Fragment {
                 Log.e("MyTag", "error===========" + t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void refresh() {
+        this.setNetwork(send_token,start,end);
     }
 }

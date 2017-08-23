@@ -44,12 +44,14 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     DayList.Tag[] tag; // 태그 값 -> json 배열
     iService service = null;
     String send_token;
+    RefreshCallback callback;
 
-    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context, String send_token, CustomDialog dialog) {
+    public CustomRecyclerViewAdapter(List<DayList> dayListBody, Context context, String send_token, CustomDialog dialog, RefreshCallback callback) {
         this.dialog = dialog;
         this.dayListBody = dayListBody;
         this.context = context;
         this.send_token = send_token;
+        this.callback = callback;
         initNetwork();
     }
 
@@ -185,6 +187,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 if(response.isSuccessful()){
                     Toast.makeText(context, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                    callback.refresh();
                 }else{
                     int statusCode = response.code();
                     Log.i("ShowListFragment", "응답코드 ============= " + statusCode);
@@ -196,6 +199,10 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 Log.e("MyTag","error==========="+t.getMessage());
             }
         });
+    }
+
+    public interface RefreshCallback{
+        public void refresh();
     }
 
 }

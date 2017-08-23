@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fastcampus.team1.foolog.CalendarFragment;
 import fastcampus.team1.foolog.ListRecyclerViewAdapter;
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.iService;
@@ -48,12 +49,14 @@ public class CustomDialog extends Dialog {
     List<DayList> dayListBody = new ArrayList<>();
     CustomRecyclerViewAdapter adapter;
     String date, send_token;
+    CalendarFragment fragment;
 
-    public CustomDialog(@NonNull Context context, List<DayList> dayListBody, String send_token) {
+    public CustomDialog(@NonNull Context context, List<DayList> dayListBody, String send_token, CalendarFragment fragment) {
         super(context);
         this.context = context;
         this.dayListBody = dayListBody;
         this.send_token = send_token;
+        this.fragment = fragment;
     }
 
     @Override
@@ -68,7 +71,7 @@ public class CustomDialog extends Dialog {
 
     private void init(){
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new CustomRecyclerViewAdapter(dayListBody, context, send_token, this);
+        adapter = new CustomRecyclerViewAdapter(dayListBody, context, send_token, this, fragment);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         txtDate = (TextView) findViewById(R.id.txtDate);
