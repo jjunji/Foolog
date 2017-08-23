@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class ShowListFragment extends Fragment {
     Typeface font;
     ListRecyclerViewAdapter adapter;
     iService service = null;
+    TextView textView;
 
     public ShowListFragment() {
         // Required empty public constructor
@@ -63,12 +65,15 @@ public class ShowListFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_list, container, false);
         initNetwork();
         initView();
+        textView.setText("모든 작성글 보기");
+        textView.setTypeface(font);
         setNetwork();
 
         return view;
     }
 
     private void initView() {
+        textView = (TextView) view.findViewById(R.id.textView);
         storage = context.getSharedPreferences("storage", Activity.MODE_PRIVATE);
         shared_token = storage.getString("inputToken", " ");
         send_token = "Token " + shared_token;
@@ -117,6 +122,5 @@ public class ShowListFragment extends Fragment {
             }
         });
     }
-
 
 }
