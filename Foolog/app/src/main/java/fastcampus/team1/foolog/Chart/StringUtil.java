@@ -11,8 +11,8 @@ import android.widget.TextView;
 public class StringUtil {
 
 
-    public String checkinDate = null;
-    public String checkoutDate = null;
+    public String startDate = null;
+    public String endDate = null;
 
 
     public static void setHtmlText(TextView target, String text){

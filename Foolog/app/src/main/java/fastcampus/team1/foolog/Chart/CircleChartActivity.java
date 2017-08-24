@@ -36,7 +36,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CircleChartActivity extends AppCompatActivity {
+public class CircleChartActivity extends AppCompatActivity{
     private String TAG = "CircleChartActivity";
     PieChart totalPiechart;
     RelativeLayout relativeLayout;
@@ -46,6 +46,8 @@ public class CircleChartActivity extends AppCompatActivity {
     CircleChartTotal total;
     TextView txtTotal;
     Button btnDate;
+
+    ChartDialog chartDialog;
 
 
     @Override
@@ -63,11 +65,8 @@ public class CircleChartActivity extends AppCompatActivity {
             }
         });
 
+
     }
-
-
-
-
 
 
     private void initView() {
@@ -214,10 +213,21 @@ public class CircleChartActivity extends AppCompatActivity {
     /**
      * DateChart 네트워크 통신 함수
      */
-    private void setDateData() {
 
+    public void setDateData() {
 
-
+        koreaTag = chartDialog.temp_korea;
+        chinaTag = chartDialog.temp_china;
+        japanTag = chartDialog.temp_japan;
+        usaTag = chartDialog.temp_usa;
+        etcTag = chartDialog.temp_etc;
+        yData = new float[]{koreaTag, japanTag, chinaTag, usaTag, etcTag};
+        xData = new String[]{"한식", "일식", "중식", "양식", "기타"};
+        setTotalPiechart();
+        addData();
     }
+
+
+
 
 }

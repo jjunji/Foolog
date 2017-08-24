@@ -4,16 +4,20 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CalendarView;
 
+import java.text.ParseException;
 import java.util.List;
 
+import fastcampus.team1.foolog.Chart.CircleChartActivity;
 import fastcampus.team1.foolog.Chart.StringUtil;
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.iService;
@@ -30,7 +34,7 @@ import static android.content.ContentValues.TAG;
  * Created by SeungHoShin on 2017. 8. 22..
  */
 
-public class ChartDialog extends Dialog implements View.OnClickListener{
+public class ChartDialog extends Dialog implements View.OnClickListener {
 
     private Button btnCheckin;
     private Button btnCheckout;
@@ -42,13 +46,22 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
     String shared_token;
     SharedPreferences storage;
     Context context;
-
+    static int start, end;
     StringUtil stringUtil = new StringUtil();
 
 
-    private static final int CHECK_IN = 10;
-    private static final int CHECK_OUT = 20;
-    private int checkStatus = CHECK_IN;
+    private static final int START_IN = 10;
+    private static final int END_OUT = 20;
+    private int checkStatus = START_IN;
+
+    int startYear, startMonth, startDay;
+    int endYear, endMonth, endDay;
+
+    TagList tagList;
+    CircleChartActivity circle;
+
+    public static float temp_korea, temp_japan, temp_china, temp_usa, temp_etc;
+
 
     public ChartDialog(@NonNull Context context) {
         super(context);
@@ -61,7 +74,7 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.dialog_date_pick);
-
+        circle = new CircleChartActivity();
         storage = getContext().getSharedPreferences("storage", Activity.MODE_PRIVATE);
         shared_token = storage.getString("inputToken", " ");
         send_token = "Token " + shared_token;
@@ -77,14 +90,13 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
         getWindow().setAttributes(lpWindow);
 
 
-
     }
 
     private void initView() {
-        btnCheckin = (Button) findViewById(R.id.btnCheckin);
-        btnCheckout = (Button) findViewById(R.id.btnCheckout);
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
-        btnOk = (Button) findViewById(R.id.btnOk);
+        btnCheckin = findViewById(R.id.btnCheckin);
+        btnCheckout = findViewById(R.id.btnCheckout);
+        calendarView = findViewById(R.id.calendarView);
+        btnOk = findViewById(R.id.btnOk);
     }
 
 
@@ -96,22 +108,28 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCheckin:
-                checkStatus = CHECK_IN;
+                checkStatus = START_IN;
                 setButtonText(btnCheckin, context.getString(R.string.hint_start_date), context.getString(R.string.hint_select_date));
-                setButtonText(btnCheckin, context.getString(R.string.hint_end_date), stringUtil.checkinDate);
+                setButtonText(btnCheckin, context.getString(R.string.hint_end_date), stringUtil.startDate);
                 break;
 
             case R.id.btnCheckout:
-                checkStatus = CHECK_OUT;
+                checkStatus = END_OUT;
                 setButtonText(btnCheckout, context.getString(R.string.hint_end_date), context.getString(R.string.hint_select_date));
-                setButtonText(btnCheckout, context.getString(R.string.hint_start_date), stringUtil.checkoutDate);
+                setButtonText(btnCheckout, context.getString(R.string.hint_start_date), stringUtil.endDate);
                 break;
             case R.id.btnOk:
                 //todo 네트워크 통신
+                try {
+                    setNetwork(send_token, start, end);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 dismiss();
         }
     }
@@ -151,23 +169,32 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
             month = month + 1;
             Log.i("Calendar", "year:" + year + ", month:" + month + ", dayOfMonth:" + dayOfMonth);
             String theDay = String.format("%d-%02d-%02d", year, month, dayOfMonth);
-            //String theDay = year+"-"+month+"-"+dayOfMonth;
-            Log.d(TAG,"theDay=="+theDay);
+
+            Log.d(TAG, "theDay==" + theDay);
             switch (checkStatus) {
-                case CHECK_IN:
-                    stringUtil.checkinDate = theDay;
-                    setButtonText(btnCheckin, context.getString(R.string.hint_start_date), stringUtil.checkinDate);
+                case START_IN:
+                    stringUtil.startDate = theDay;
+                    startYear = year;
+                    startMonth = month;
+                    startDay = dayOfMonth;
+                    Log.d(TAG, "START==year&month&day==" + startYear + "|" + startMonth + "|" + startDay);
+                    setButtonText(btnCheckin, context.getString(R.string.hint_start_date), stringUtil.startDate);
                     break;
-                case CHECK_OUT:
-                    stringUtil.checkoutDate = theDay;
-                    setButtonText(btnCheckout, context.getString(R.string.hint_end_date), stringUtil.checkoutDate);
+                case END_OUT:
+                    stringUtil.endDate = theDay;
+                    endYear = year;
+                    endMonth = month;
+                    endDay = dayOfMonth;
+                    Log.d(TAG, "END==year&month&day==" + endYear + "|" + endMonth + "|" + endDay);
+                    setButtonText(btnCheckout, context.getString(R.string.hint_end_date), stringUtil.endDate);
                     break;
             }
         }
     };
 
 
-    public void setNetwork(String send_token, String start, String end,Context context){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void setNetwork(String send_token, int start, int end) throws ParseException {
 
 
         // 레트로핏 정의
@@ -179,12 +206,41 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
         // 인터페이스 불러오기
         iService service = retrofit.create(iService.class);
 
-        Call<List<TagList>> call = service.createDatePick(send_token,start,end);
+        // 날짜 형식이 2017-01-01 이런식으로 날라와서 -를 제외시켜주었다.
+        start = Integer.parseInt(stringUtil.startDate.replaceAll("-", ""));
+        end = Integer.parseInt(stringUtil.endDate.replaceAll("-", ""));
+
+
+        Log.d(TAG, "start==" + start);
+        Log.d(TAG, "end==" + end);
+
+        Call<List<TagList>> call = service.createDatePick(send_token, start, end);
+        Log.e("ChartDialog", "origin url ==" + call.request().url());
+
         call.enqueue(new Callback<List<TagList>>() {
             @Override
             public void onResponse(Call<List<TagList>> call, Response<List<TagList>> response) {
                 List<TagList> tagList = response.body();
-                Log.d(TAG,"taglList=="+tagList);
+                Log.d(TAG, "taglList==" + tagList);
+
+                for (int i = 0; i < tagList.size(); i++) {
+                    temp_korea = tagList.get(i).count.한식 + temp_korea;
+                    temp_china = tagList.get(i).count.중식 + temp_china;
+                    temp_japan = tagList.get(i).count.일식 + temp_japan;
+                    temp_usa = tagList.get(i).count.양식 + temp_usa;
+                    temp_etc = tagList.get(i).count.기타 + temp_etc;
+                }
+
+
+
+                Log.d(TAG, "temp_korea==" + temp_korea);
+                Log.d(TAG, "temp_china==" + temp_china);
+                Log.d(TAG, "temp_japan==" + temp_japan);
+                Log.d(TAG, "temp_usa==" + temp_usa);
+                Log.d(TAG, "temp_etc==" + temp_etc);
+
+
+
             }
 
             @Override
@@ -193,5 +249,7 @@ public class ChartDialog extends Dialog implements View.OnClickListener{
             }
         });
     }
+
+
 
 }
