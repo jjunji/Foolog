@@ -37,42 +37,42 @@
                 android:layout_weight="1" />
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:orientation="horizontal">-->
 
-                <TextView
-                    android:id="@+id/txtMonth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="fill_vertical|center_horizontal"
-                    android:text="@string/statistic_month"
-                    android:textAlignment="center"
-                    android:textSize="24sp" />
+                <!--<TextView-->
+                    <!--android:id="@+id/txtMonth"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="fill_vertical|center_horizontal"-->
+                    <!--android:text="@string/statistic_month"-->
+                    <!--android:textAlignment="center"-->
+                    <!--android:textSize="24sp" />-->
 
-                <Button
-                    android:id="@+id/btnDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/statistic_pick" />
-            </LinearLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/btnDate"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/statistic_pick" />-->
+            <!--</LinearLayout>-->
 
 
-            <FrameLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></FrameLayout>
+            <!--<FrameLayout-->
+                <!--android:id="@+id/container"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"></FrameLayout>-->
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/monthPiechart"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_margin="24dp"
-                android:layout_weight="1" />
+            <!--<com.github.mikephil.charting.charts.PieChart-->
+                <!--android:id="@+id/monthPiechart"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="400dp"-->
+                <!--android:layout_margin="24dp"-->
+                <!--android:layout_weight="1" />-->
 
 
 

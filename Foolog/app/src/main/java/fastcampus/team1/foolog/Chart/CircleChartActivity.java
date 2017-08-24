@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,13 +56,13 @@ public class CircleChartActivity extends AppCompatActivity{
         initView();
         setTotalData();
 
-        btnDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChartDialog chartDialog = new ChartDialog(CircleChartActivity.this);
-                chartDialog.show();
-            }
-        });
+//        btnDate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ChartDialog chartDialog = new ChartDialog(CircleChartActivity.this);
+//                chartDialog.show();
+//            }
+//        });
 
 
     }
@@ -73,7 +72,7 @@ public class CircleChartActivity extends AppCompatActivity{
         relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         totalPiechart = (PieChart) findViewById(R.id.totalPiechart);
         txtTotal = (TextView) findViewById(R.id.txtTotal);
-        btnDate = (Button) findViewById(R.id.btnDate);
+//        btnDate = (Button) findViewById(R.id.btnDate);
     }
 
     private void setTotalPiechart() {
@@ -211,7 +210,7 @@ public class CircleChartActivity extends AppCompatActivity{
     }
 
     /**
-     * DateChart 네트워크 통신 함수
+     * DateChart 그려주는 함수
      */
 
     public void setDateData() {
