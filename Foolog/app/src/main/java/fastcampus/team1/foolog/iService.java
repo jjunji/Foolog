@@ -10,11 +10,8 @@ import fastcampus.team1.foolog.model.Delete;
 import fastcampus.team1.foolog.model.Join;
 import fastcampus.team1.foolog.model.Login;
 import fastcampus.team1.foolog.model.LoginResult;
-
 import fastcampus.team1.foolog.model.Marker;
-
 import fastcampus.team1.foolog.model.TagList;
-
 import fastcampus.team1.foolog.model.WriteCreate;
 import fastcampus.team1.foolog.model.WriteListResult;
 import okhttp3.MultipartBody;
@@ -55,10 +52,18 @@ public interface iService {
     //Call<TagList[]> createTagList(@Path("start") int start, @Path("end") int end);
     @GET("stats/")
     Call<List<TagList>> createTagList(
-                                @Header("Authorization") String send_token,
-                                @Query("start") String start,
-                                @Query("end") String end
-                                );
+            @Header("Authorization") String send_token,
+            @Query("start") String start,
+            @Query("end") String end
+    );
+
+    @GET("stats/")
+    Call<List<TagList>> createDatePick(
+            @Header("Authorization") String send_token,
+            @Query("start") int start,
+            @Query("end") int end
+    );
+
 
 
     @GET("post/")
@@ -80,9 +85,9 @@ public interface iService {
                                       @Part("tags") RequestBody tags,
                                       @Part("title") RequestBody title,
                                       @Part("memo") RequestBody memo,
-                                      @Part ("latitude")RequestBody latitude,
-                                      @Part ("longitude")RequestBody longitude
+                                      @Part("latitude") RequestBody latitude,
+                                      @Part("longitude") RequestBody longitude
 //                                      @Part MultipartBody.Part date,
-                                        );
+    );
 
 }

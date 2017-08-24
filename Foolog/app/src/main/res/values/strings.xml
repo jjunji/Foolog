@@ -21,6 +21,16 @@
     <string name="navi_statistics">통계</string>
     <string name="navi_etc">기타</string>
 
+    <string name="statistic_total">전체 태그 통계</string>
+    <string name="statistic_month">월별 태그 통계</string>
+    <string name="statistic_pick">기간 선택하기</string>
+    <string name="title_select_date">기간을 선택해주세요</string>
+
+    <string name="hint_start_date">Start Date</string>
+    <string name="hint_select_date">Select date</string>
+    <string name="hint_end_date">End Date \n -</string>
+    <string name="button_ok">확인</string>
+
 
     <!--todo 임시로 string을 부여했고 다듬으려면 CustomView를 통해서 태그를 만들어 놔야 한다. -->
     <string name="tag_korea">한식</string>

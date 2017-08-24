@@ -5,6 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +26,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.bumptech.glide.Glide;
+
+
 import fastcampus.team1.foolog.CalendarFragment;
 import fastcampus.team1.foolog.ListRecyclerViewAdapter;
+
 import fastcampus.team1.foolog.R;
 import fastcampus.team1.foolog.iService;
 import fastcampus.team1.foolog.model.AllList;
@@ -36,10 +46,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
+
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class CustomDialog extends Dialog {
 

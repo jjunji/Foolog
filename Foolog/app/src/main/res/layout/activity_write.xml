@@ -23,10 +23,11 @@
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:onClick="doBack"
-                app:srcCompat="?attr/homeAsUpIndicator" />
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_weight="0.04"
+                android:background="@drawable/write_back"
+                android:onClick="doBack" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -35,11 +36,12 @@
 
             <ImageButton
                 android:id="@+id/btnPost"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/write_ok"
                 android:onClick="doPost"
-                android:textAlignment="center"
-                app:srcCompat="@android:drawable/ic_menu_send" />
+                android:textAlignment="center" />
         </LinearLayout>
 
         <LinearLayout

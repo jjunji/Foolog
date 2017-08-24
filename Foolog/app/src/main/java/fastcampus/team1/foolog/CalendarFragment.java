@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.icu.util.Calendar;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -21,17 +20,18 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.Dialog.CustomDialog;
+
+
 import fastcampus.team1.foolog.Dialog.CustomRecyclerViewAdapter;
 import fastcampus.team1.foolog.model.DayList;
+
 import fastcampus.team1.foolog.model.TagList;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -40,6 +40,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 
 /**
@@ -106,6 +108,9 @@ public class CalendarFragment extends Fragment implements CustomRecyclerViewAdap
         storage = context.getSharedPreferences("storage", Activity.MODE_PRIVATE);
         shared_token = storage.getString("inputToken", " ");
         send_token = "Token " + shared_token;
+
+        Log.d(TAG,"send_token"+send_token);
+        Log.d(TAG,"shared_token"+shared_token);
 
         font = Typeface.createFromAsset(getActivity().getAssets(), "yaFontBold.ttf");
 
