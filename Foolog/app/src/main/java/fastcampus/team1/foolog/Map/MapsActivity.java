@@ -249,9 +249,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("MapsACT", "marker.size==" + marker.size());
                     Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(0).tags[0].text);
                     Log.e("MapsACT", "marker.get(0).tags[1].text==" + marker.get(0).tags[1].text);
-                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(1).tags[0].text);
-                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(2).tags[0].text);
-                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(3).tags[0].text);
+//                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(1).tags[0].text);
+//                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(2).tags[0].text);
+//                    Log.e("MapsACT", "marker.get(0).tags[0].text==" + marker.get(3).tags[0].text);
 
                     // todo 예외처리 , location값이 없었을때의 예외 처리
                     for (int i = 0; i < marker.size(); i++) {

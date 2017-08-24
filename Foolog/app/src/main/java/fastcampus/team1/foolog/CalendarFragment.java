@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,11 +27,8 @@ import java.util.List;
 
 import fastcampus.team1.foolog.Calendar.CalendarAdapter;
 import fastcampus.team1.foolog.Dialog.CustomDialog;
-
-
 import fastcampus.team1.foolog.Dialog.CustomRecyclerViewAdapter;
 import fastcampus.team1.foolog.model.DayList;
-
 import fastcampus.team1.foolog.model.TagList;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
