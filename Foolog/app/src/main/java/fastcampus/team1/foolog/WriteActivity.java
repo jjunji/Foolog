@@ -27,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.google.android.gms.maps.MapsInitializer;
 import com.soundcloud.android.crop.Crop;
 
