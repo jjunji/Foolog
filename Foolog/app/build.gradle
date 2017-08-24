@@ -47,4 +47,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // 차트 라이브러리
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
 }

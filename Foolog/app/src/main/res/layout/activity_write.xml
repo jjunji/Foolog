@@ -10,9 +10,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:background="@drawable/background"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,10 +23,11 @@
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:onClick="doBack"
-                app:srcCompat="?attr/homeAsUpIndicator" />
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_weight="0.04"
+                android:background="@drawable/write_back"
+                android:onClick="doBack" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -34,11 +36,12 @@
 
             <ImageButton
                 android:id="@+id/btnPost"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/write_ok"
                 android:onClick="doPost"
-                android:textAlignment="center"
-                app:srcCompat="@android:drawable/ic_menu_send" />
+                android:textAlignment="center" />
         </LinearLayout>
 
         <LinearLayout
@@ -52,7 +55,8 @@
                 android:layout_height="300dp"
                 android:layout_weight="1"
                 android:clickable="true"
-                app:srcCompat="@mipmap/ic_launcher" />
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_menu_camera" />
 
         </LinearLayout>
 
@@ -312,7 +316,6 @@
                 android:background="#BDBDBD" />
 
 
-
         </LinearLayout>
 
 
@@ -327,11 +330,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:lines="5"
-                android:scrollbars="vertical"
                 android:hint="@string/write_text"
                 android:inputType="textMultiLine"
-                android:padding="8dp" />
+                android:lines="5"
+                android:padding="8dp"
+                android:scrollbars="vertical" />
 
         </LinearLayout>
 
@@ -341,8 +344,8 @@
             android:layout_weight="1" />
 
         <!--<Space-->
-            <!--android:layout_width="20dp"-->
-            <!--android:layout_height="100dp"/>-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="100dp"/>-->
 
     </LinearLayout>
 </ScrollView>

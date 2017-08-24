@@ -10,13 +10,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.*;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity
     public void setFragment(){
         arr = new Fragment[2];
         arr[0] = CalendarFragment.newInstance(mContext);
-        arr[1] = new ListFragment();
+        arr[1] = ShowListFragment.newInstance(mContext);
     }
 
     public void setAdapter(){

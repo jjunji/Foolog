@@ -39,15 +39,13 @@ public class CalendarAdapter extends BaseAdapter{
     ArrayList<String> dayList = new ArrayList<String>();
     int curMonth;
     int dayOfWeek;
-    int lastDay;
 
-    public CalendarAdapter(Context context, ArrayList<String> dayList, int curMonth, List<TagList> tagList, int dayOfWeek, int lastDay) {
+    public CalendarAdapter(Context context, ArrayList<String> dayList, int curMonth, List<TagList> tagList, int dayOfWeek) {
         this.dayList = dayList;
         this.curMonth = curMonth;
         this.context = context;
         this.tagList = tagList;
         this.dayOfWeek = dayOfWeek;
-        this.lastDay = lastDay;
     }
 
     @Override
