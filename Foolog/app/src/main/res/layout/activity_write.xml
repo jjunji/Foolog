@@ -10,9 +10,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:background="@drawable/background"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,11 +49,11 @@
 
             <ImageView
                 android:id="@+id/WriteImage"
-                android:scaleType="centerCrop"
                 android:layout_width="100dp"
                 android:layout_height="300dp"
                 android:layout_weight="1"
                 android:clickable="true"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_menu_camera" />
 
         </LinearLayout>
@@ -313,7 +314,6 @@
                 android:background="#BDBDBD" />
 
 
-
         </LinearLayout>
 
 
@@ -328,11 +328,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:lines="5"
-                android:scrollbars="vertical"
                 android:hint="@string/write_text"
                 android:inputType="textMultiLine"
-                android:padding="8dp" />
+                android:lines="5"
+                android:padding="8dp"
+                android:scrollbars="vertical" />
 
         </LinearLayout>
 
@@ -342,8 +342,8 @@
             android:layout_weight="1" />
 
         <!--<Space-->
-            <!--android:layout_width="20dp"-->
-            <!--android:layout_height="100dp"/>-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="100dp"/>-->
 
     </LinearLayout>
 </ScrollView>
